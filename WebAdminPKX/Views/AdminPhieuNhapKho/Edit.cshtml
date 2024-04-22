@@ -19,6 +19,12 @@
 <div class="row">
     <div class="modal-body">
         <form asp-action="Edit">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-info "><i class="far fa-save m-r-5 fa-lg"></i>Cập nhật</button>
+                    <button class="btn btn-warning"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</button>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-body" style="background-color:#FAEAEA">
                     <div class="row">
@@ -112,7 +118,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <a asp-controller="AdminPhieuNhapKho" asp-action="ThemSanPham" asp-route-id="@Model.IdPhieuNhapKho" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm sản phẩm nhập</a>
-                   
+
                 </div>
             </div>
             <div class="col-md-6">

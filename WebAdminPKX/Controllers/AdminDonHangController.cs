@@ -33,7 +33,7 @@ namespace WebAdminPKX.Controllers
             if (status != null)
             {
                 donHangs = donHangs.Where(t => t.IdTrangThai == status)
-                                   .OrderByDescending(t => t.DNgayTao);
+                                   .OrderBy(t => t.IdTrangThai);
             }
             PagedList<TblDonHang> models = new PagedList<TblDonHang>(donHangs, pageNumber, pageSize);
             ViewBag.CurrentPage = pageNumber;
@@ -49,6 +49,7 @@ namespace WebAdminPKX.Controllers
             var donHangs = _context.TblDonHangs
                 .Include(t => t.IdKhachHangNavigation)
                 .Include(t => t.IdTrangThaiNavigation)
+                .OrderBy(t=>t.IdTrangThai)
                 .AsNoTracking();
             if(idTrangThai != 0)
             {
