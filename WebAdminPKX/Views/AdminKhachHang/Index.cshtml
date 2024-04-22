@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Domain.Models.TblKhachHang>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p class="mb-3">
+    <a class="btn btn-primary" asp-action="Create">Tạo mới</a>
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.DisplayNameFor(model => model.STenKhachHang)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.SDiaChi)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.SEmail)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.SSdt)</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@Html.DisplayFor(modelItem => item.STenKhachHang)</th>
+                            <td>@Html.DisplayFor(modelItem => item.SDiaChi)</td>
+                            <td>@Html.DisplayFor(modelItem => item.SEmail)</td>
+                            <td>@Html.DisplayFor(modelItem => item.SSdt)</td>
+                            <td>
+                                <a class="btn btn-primary" href="@Url.Action("Details", "AdminKhachHang",new {id=item.IdKhachHang})">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                <a class="btn btn-success" href="@Url.Action("Edit", "AdminKhachHang",new {id=item.IdKhachHang})">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-danger" href="@Url.Action("Delete", "AdminKhachHang",new {id=item.IdKhachHang})">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

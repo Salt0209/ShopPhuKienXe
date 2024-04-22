@@ -1,0 +1,184 @@
+﻿@model List<PKX_DATN.ModelViews.SanPhamGioHang>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content">
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Giỏ Hàng</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/index.html">Home</a>
+                            <a href="/shop.html">Shop</a>
+                            <span>Giỏ Hàng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        <div class="shopping__cart__table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Tổng tiền</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count() > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td class="product__cart__item">
+                                                    <div class="product__cart__item__pic">
+                                                        <img src="~/images/products/@item.SanPham.SHinhAnh" alt="@item.SanPham.SMoTa">
+                                                    </div>
+                                                    <div class="product__cart__item__text">
+                                                        <h6><a href="javascript:void(0)">@item.SanPham.STenSanPham</a></h6>
+                                                        <h5><span class="amount">@item.SanPham.FGiaTien.Value.ToString("#,##0") VNĐ</span></h5>
+                                                    </div>
+                                                </td>
+                                                <td class="quantity__item">
+                                                    <div class="quantity">
+                                                        <div class="">
+                                                            <input class="cartQuantity cartItem" data-mahh="@item.SanPham.IdSanPham" data-dongia="@item.SanPham.FGiaTien" value="@item.amount" min="1" max="@item.SanPham.ISoLuongTonKho" type="number" onchange="updatePrice(this)">
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="cart__price"><span class="amount">@item.TotalMoney.ToString("#,##0") VNĐ</span></td>
+                                                <td class="cart__close"> <input type="button" value="X" class="removecart btn btn-primary" data-mahh="@item.SanPham.IdSanPham" /></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Chưa có hàng hóa trong giỏ hàng</p>
+                    }
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="continue__btn    ">
+                                <a href="/shop.html" class="btn-warning">Tiếp tục mua hàng</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cart__discount">
+                        <h6>Mã giảm giá</h6>
+                        <form action="#">
+                            <input type="text" placeholder="Coupon code">
+                            <button type="submit"><i class="fas fa-ticket-alt m-r-5"></i> Áp dụng</button>
+                        </form>
+                    </div>
+                    <div class="cart__total">
+                        <h6>Thanh toán</h6>
+                        <ul>
+                            <li>Tổng: <span id="totalAmount">@Model.Sum(x => x.TotalMoney).ToString("#,##0") VNĐ</span></li>
+                        </ul>
+                        <a href="/checkout.html" class="btn btn-info" style="background-color:#00BFFF">Tiến hành thanh toán</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shopping Cart Section End -->
+</main>
+@section Scripts{
+    <script>
+        $(function () {
+            function loadHeaderCart() {
+                $("#miniCart").load("/AjaxContent/HeaderCart");
+                $("#numberCart").load("/AjaxContent/NumberCart");
+            }
+            $(".removecart").click(function () {
+                var productid = $(this).attr("data-mahh");
+                $.ajax({
+                    url: "api/cart/remove",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { productID: productid },
+                    success: function (result) {
+                        if (result.success) {
+                            loadHeaderCart();//load lai gio
+                            window.location = '/cart.html';
+                            alert("Xóa sản phâm thành công");
+
+                        }
+                    },
+                    error: function (rs) {
+                        alert("Remove Cart Error!");
+                    }
+                });
+            });
+            $(".cartItem").click(function () {
+                var productid = $(this).attr("data-mahh");
+                var soluong = parseInt($(this).val());
+                console.log(soluong);
+                $.ajax({
+                    url: "api/cart/update",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        productID: productid,
+                        amount: soluong
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            loadHeaderCart();//reload lai gio hang
+                        }
+                    },
+                    error: function (rs) {
+                        alert("Cập nhật Cart error!");
+                    }
+                });
+            });
+        });
+        function updatePrice(input) {
+            var quantity = parseInt(input.value);
+            var price = parseFloat(input.getAttribute('data-dongia'));
+            var totalPrice = quantity * price;
+            var formattedPrice = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            var priceElement = input.closest('tr').querySelector('.cart__price .amount');
+            priceElement.textContent = formattedPrice;
+            updateTotalPrice();
+        }
+    </script>
+
+    <script>
+        function updateTotalPrice() {
+            var totalPrice = 0;
+            var items = document.querySelectorAll('.cartItem');
+
+            items.forEach(function (item) {
+                var quantity = parseInt(item.value);
+                var price = parseFloat(item.getAttribute('data-dongia'));
+                totalPrice += quantity * price;
+            });
+
+            var formattedPrice = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            document.getElementById('totalAmount').textContent = formattedPrice;
+        }
+    </script>
+}

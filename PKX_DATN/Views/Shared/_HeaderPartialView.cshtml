@@ -1,0 +1,93 @@
+﻿
+<div class="offcanvas-menu-overlay"></div>
+<div class="offcanvas-menu-wrapper">
+    <div class="offcanvas__option">
+        <div class="offcanvas__links">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <h5>Welcome,<a href="/Accounts/Dashboard">@User.Identity.Name</a></h5>
+            }
+            else
+            {
+                <a href="/Accounts/Login">Đăng nhập</a>
+                <a href="/dang-ky.html">Đăng ký</a>
+            }
+
+        </div>
+    </div>
+    <div class="offcanvas__nav__option">
+         <a href="/cart.html"><img src="~/assets/img/icon/cart.png" /> <span>@await Component.InvokeAsync("NumberCart")</span></a>
+ @**@        <div class="price">$0.00</div>
+    </div>
+    <div id="mobile-menu-wrap"></div>
+    <div class="offcanvas__text">
+        <p>Miễn phí giao hàng trong 1 tuần và hoàn trả.</p>
+    </div>
+</div>
+<!-- Offcanvas Menu End -->
+<!-- Header Section Begin -->
+<header class="header">
+    <div class="header__top" style="background-color:darkorange">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-7">
+                    <div class="header__top__left">
+                        <p>Thời gian làm việc: 8:00 - 21:00</p>
+                        <p>Hotline: 0973 369 369 / Kỹ thuật: 0987 123 123</p>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-5">
+                    <div class="header__top__right">
+                        <div class="header__top__links">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <h5>Welcome,<a href="/Accounts/Dashboard">@User.Identity.Name</a></h5>
+                            }
+                            else
+                            {
+                                <a href="/Accounts/Login">Đăng nhập</a>
+                                <a href="/dang-ky.html">Đăng ký</a>
+                            }
+
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-2 col-md-2">
+                <div class="header__logo">
+                    <a href="/index.html" style="width: 50px; height: 50px;"><img src=~/assets/images/logo/z5297720385657_5138fcf646f04bd09c7ee25945614dd4.jpg /></a>
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-7">
+                <nav class="header__menu mobile-menu mt-4">
+                    <ul>
+                        <li><a href="/index.html">Home</a></li>
+                        <li><a href="/shop.html">Shop</a></li>
+                        <li>
+                            <form class="d-flex" asp-controller="SanPham" asp-action="Index" method="get">
+                                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchstring">
+                                <button class="btn btn-outline-primary" type="submit">Search</button>
+                            </form>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+
+            <div class="col-lg-3 col-md-3 mt-4 text-end">
+                <div class="header__nav__option">
+                    <a href="/cart.html"><img src="~/assets/img/icon/cart.png" /> @await Component.InvokeAsync("NumberCart")</a>
+                    <div class="price">Giỏ hàng</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+</header>
+<!-- Header Section End -->

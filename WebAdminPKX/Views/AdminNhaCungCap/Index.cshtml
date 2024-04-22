@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Domain.Models.TblNhaCungCap>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<p class="mb-3">
+    <a class="btn btn-primary" asp-action="Create">Tạo mới</a>
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.DisplayNameFor(model => model.STenNhaCungCap)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.SDiaChi)</th>
+                        <th scope="col">Tác vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@Html.DisplayFor(modelItem => item.STenNhaCungCap)</th>
+                            <th scope="row">@Html.DisplayFor(modelItem => item.SDiaChi)</th>
+                            <td>
+                                <a class="btn btn-primary" href="@Url.Action("Details", "AdminNhaCungCap",new {id=item.IdNhaCungCap})">
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                <a class="btn btn-success" href="@Url.Action("Edit", "AdminNhaCungCap",new {id=item.IdNhaCungCap})">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-danger" href="@Url.Action("Delete", "AdminNhaCungCap",new {id=item.IdNhaCungCap})">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

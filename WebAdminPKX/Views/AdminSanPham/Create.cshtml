@@ -1,0 +1,115 @@
+﻿@model Domain.Models.TblSanPham
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<form asp-controller="AdminSanPham" asp-action="Create" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="page-header no-gutters has-tab">
+        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+            <div class="page-header">
+                <h2 class="header-title">Thêm sản phẩm</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+                        <a class="breadcrumb-item" asp-controller="AdminSanPham" asp-action="Index">Danh sách sản phẩm</a>
+
+                    </nav>
+                </div>
+            </div>
+            <div class="media align-items-center m-b-15">
+            </div>
+            <div class="m-b-15">
+                <button class="btn btn-primary">
+                    <i class="far fa-save m-r-5 fa-lg"></i>
+                    <span>Lưu</span>
+                </button>
+            </div>
+        </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#product-edit-basic">Thông tin cơ bản</a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="product-edit-basic">
+            <div class="card" style="background-color: #FAEAEA">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="STenSanPham">Tên sản phẩm *</label>
+                        <input type="text" class="form-control" asp-for="STenSanPham">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="SMoTa">Mô tả *</label>
+                        <input type="text" class="form-control" asp-for="SMoTa">
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="FGiaTien">Giá bán *</label>
+                            <input type="text" class="form-control" asp-for="FGiaTien">
+                        </div>
+                        
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="IdDanhMuc">Danh mục sản phẩm *</label>
+                            <select class="custom-select" asp-for="IdDanhMuc" style="min-width: 200px;" asp-items="ViewBag.IdDanhMuc">
+
+                                <option value="" disabled selected>Chọn danh mục</option>
+                            </select>
+                        </div>
+
+                        @*<div class="form-group col-md-6">
+                        <label class="font-weight-semibold" for="productSupplier">Chọn nhà cung cấp</label>
+                        <select class="custom-select" asp-for="SupplierId" style="min-width: 200px;" asp-items="ViewBag.NhaCungCap">
+
+                        <option value="" disabled selected>Chọn nhà cung cấp</option>
+                        </select>
+                        </div>*@
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="ISoLuongTonKho">Hàng tồn *</label>
+                            <input type="text" class="form-control" asp-for="ISoLuongTonKho">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="font-weight-semibold" for="SHinhAnh">Ảnh sản phẩm</label>
+                            <input name="fThumb" type="file" class="form-control-file" asp-for="SHinhAnh">
+                            <span asp-validation-for="SHinhAnh" class="text-danger"></span>
+                        </div>
+                        
+                    </div>
+
+
+                    @*  <div class="form-group">
+                    <label class="font-weight-semibold" for="productStatus">Trạng Thái</label>
+                    <select class="custom-select" id="productStatus">
+                    <option value="inStock" selected>Còn Hàng</option>
+                    <option value="outOfStock">Hết Hàng</option>
+                    <option value="pending">Đang chờ</option>
+                    </select>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</form>
+<div class="text-left">
+    <a class="btn btn-primary " asp-action="Index"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</a>
+</div>
+
+@section Scripts {
+    <!-- page js -->
+    <script src="~/Adminassets/vendors/select2/select2.min.js"></script>
+    <script src="~/Adminassets/vendors/quill/quill.min.js"></script>
+    <script src="~/Adminassets/js/pages/e-commerce-product-edit.js"></script>
+}
+
+
+

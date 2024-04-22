@@ -1,0 +1,66 @@
+﻿@model Domain.Models.TblChiTietPhieuNhapKho
+
+@{
+    ViewData["Title"] = "XoaSanPham";
+}
+<div class="page-header">
+    <h2 class="header-title">Thêm sản phẩm nhập kho</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a class="breadcrumb-item" asp-controller="AdminPhieuNhapKho" asp-action="Index">Danh sách phiếu nhập</a>
+            <a class="breadcrumb-item" asp-controller="AdminPhieuNhapKho" asp-action="Edit" asp-route-id="@ViewBag.Id">Thông tin phiếu nhập</a>
+
+        </nav>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="teble-responsive">
+            <table class="product-info-table m-t-20">
+                <tbody>
+                    <tr>
+                        <td>Mã sản phẩm:</td>
+                        <td class="text-dark font-weight-semibold">@Model.IdSanPham</td>
+                    </tr>
+                    <tr>
+                        <td>Tên sản phẩm:</td>
+                        <td class="text-dark font-weight-semibold">@Model.IdSanPhamNavigation.STenSanPham</td>
+                    </tr>
+                    <tr>
+                        <td>Số lượng:</td>
+                        <td>@Model.ISoLuongNhap</td>
+                    </tr>
+                    <tr>
+                        <td>Đơn giá:</td>
+                        <td>@(Model.FDonGiaNhap.ToString("#,##0")) VND</td>
+                    </tr>
+                    <tr>
+                        <td>Tổng tiền:</td>
+                        <td>
+                            @((Model.ISoLuongNhap * Model.FDonGiaNhap).ToString("#,##0")) VND
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ghi chú:</td>
+                        <td>@Model.SGhiChu</td>
+                    </tr>
+
+                    <tr>
+                        <td>Xác nhận xóa:</td>
+                        <td>
+                            <form asp-controller="AdminPhieuNhapKho" asp-action="XoaSanPham" asp-route-id="@Model.IdChiTietPhieuNhapKho" method="post">
+                                <input type="hidden" asp-for="IdPhieuNhapKho" value="@Model.IdPhieuNhapKho"/>
+                                <button type="submit" class="btn btn-danger btn-tone"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Xác nhận xóa</button>
+                                |
+                                <a class="btn btn-warning   m-r-5" asp-action="Edit" asp-route-id="@Model.IdPhieuNhapKho"> <i class="fas fa-undo m-r-5 fa-lg"></i>Huỷ bỏ</a>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>

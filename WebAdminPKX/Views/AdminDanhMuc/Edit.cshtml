@@ -1,0 +1,61 @@
+﻿@model Domain.Models.TblDanhMuc
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<form asp-controller="AdminDanhMuc" asp-action="Edit" asp-route-id="@Model.IdDanhMuc" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="IdDanhMuc" />
+
+    <div class="page-header no-gutters has-tab">
+        <div class="d-md-flex m-b-15 align-items-center justify-content-between">
+            <div class="page-header">
+                <h2 class="header-title">Sửa danh mục</h2>
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+                        <a class="breadcrumb-item" asp-controller="AdminDanhMuc" asp-action="Index">Danh sách danh mục</a>
+
+                    </nav>
+                </div>
+            </div>
+            <div class="media align-items-center m-b-15">
+            </div>
+            <div class="m-b-15">
+                <button class="btn btn-primary">
+                    <i class="anticon anticon-save fa-lg"></i>
+                    <span>Cập nhật</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+    <div class="tab-content m-t-15">
+        <div class="tab-pane fade show active" id="product-edit-basic">
+            <div class="card" style="background-color: #FAEAEA">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="productName">Tên danh mục</label>
+                        <input type="text" class="form-control" asp-for="STenDanhMuc">
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="productStatus">Trạng thái</label>
+                        <select class="custom-select" id="productStatus" name="published">
+                            <option value="true">Đã phát hành</option>
+                            <option value="false">Chưa phát hành</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="font-weight-semibold" for="ShortDesc">Mô tả</label>
+                        <input type="text" class="form-control" asp-for="SMoTa">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div>
+    <a class="btn btn-primary btn-sm" asp-action="Index"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</a>
+</div>

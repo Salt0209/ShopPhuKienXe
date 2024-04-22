@@ -1,0 +1,77 @@
+﻿@model Domain.Models.TblDonHang
+
+@{
+    ViewData["Title"] = "Thông tin đơn hàng";
+    List<TblDonHang> orderDetails = ViewBag.ChiTiet;
+
+}
+
+
+<div class="page-header">
+    <h2 class="header-title">Cập nhật trạng thái</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-controller="AdminDonHang" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a class="breadcrumb-item" asp-controller="AdminDonHang" asp-action="Index">Danh sách đơn hàng</a>
+
+        </nav>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Thông tin đơn hàng</h4>
+            <div class="table-responsive">
+                <table class="product-info-table m-t-20">
+                    <tbody>
+                        <tr>
+                            <td>Mã hóa đơn:</td>
+                            <td class="text-dark font-weight-semibold">@Model.IdDonHang</td>
+                        </tr>
+                        <tr>
+                            <td>Này mua hàng:</td>
+                            <td class="text-dark font-weight-semibold">@Model.DNgayTao</td>
+                        </tr>
+                        <tr>
+                            <td>Khách hàng:</td>
+                            <td class="text-dark font-weight-semibold">@Model.IdKhachHangNavigation.STenKhachHang</td>
+                        </tr>
+                        <tr>
+                            <td>Số điện thoại:</td>
+                            <td class="text-dark font-weight-semibold">@Model.IdKhachHangNavigation.SSdt</td>
+                        </tr>
+                        <tr>
+                            <td>Địa chỉ:</td>
+                            <td class="text-dark font-weight-semibold">@Model.IdKhachHangNavigation.SDiaChi</td>
+                        </tr>
+                        <tr>
+                            <td>Tổng tiền:</td>
+                            <td class="text-dark font-weight-semibold">@Model.FTongTien.Value.ToString("#,##0") VNĐ</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body" style="background-color: #FAEAEA">
+            <form asp-controller="AdminDonHang" asp-action="CapNhatTrangThai" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="IdDonHang" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Chọn trạng thái đơn hàng</label>
+                            <select class="form-control" asp-items="@ViewBag.TrangThai" id="IdTrangThai" name="IdTrangThai">
+                                <option value="0" selected>Chọn trạng thái đơn hàng</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-info"><i class="far fa-save m-r-5 fa-lg"></i>Lưu thay đổi</button>
+                <a href="/AdminDonHang"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</a>
+            </form>
+        </div>
+    </div>
+</div>

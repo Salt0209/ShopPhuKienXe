@@ -1,0 +1,300 @@
+﻿@model IEnumerable<Domain.Models.TblSanPham>
+
+@{
+    ViewData["Title"] = "Index";
+    int index = 1;
+}
+
+<div class="card" style="background-color:#FFF0F5">
+    <div class="card-body">
+
+        <div class="row m-b-30">
+            <div class="col-md-8">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="input-affix m-v-10">
+                            <select class="custom-select" id="txtcatID" name="txtcatID" style="min-width: 200px;">
+                                <option value="0">Tất cả sản phẩm</option>
+                                <option value="1">Sản phẩm đang mở</option>
+                                <option value="2">Sản phẩm đã khoá</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-affix m-v-10">
+                            <i class="prefix-icon anticon anticon-search opacity-04"></i>
+                            <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm... ">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 text-right">
+                <a class="btn btn-success " asp-controller="AdminSanPham" asp-action="Create"> <i class="far fa-plus-square m-r-5 fa-lg"></i><span>Thêm Sản Phẩm</span></a>
+
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+
+                        <th>STT</th>
+                        <th class="col-lg-2">Tên sản phẩm</th>
+                        <th>Mô tả</th>
+                        <th>Danh mục</th>
+                        <th>Giá tiền</th>
+                        <th>Tồn kho</th>
+                        <th>Trạng thái</th>
+
+                    </tr>
+                </thead>
+                <tbody id="records_table">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @index
+                                </td>
+                                <td>
+                                    @item.STenSanPham
+
+                                </td>
+                                <td>
+                                    @item.SMoTa
+                                </td>
+                                <td>
+                                    @item.IdDanhMucNavigation.STenDanhMuc
+                                </td>
+                                <td>
+                                    @item.FGiaTien.Value.ToString("#,##0") VND
+                                </td>
+
+                                <td>@item.ISoLuongTonKho</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="badge badge-success badge-dot m-r-10"></div>
+                                        @if (item.BTrangThai)
+                                        {
+                                            <div>Đang bán</div>
+                                        }
+                                        else
+                                        {
+                                            <div>Ẩn</div>
+                                        }
+                                    </div>
+
+                                </td>
+                                <td>
+                                    <label class="switch">
+                                        @if (item.BTrangThai == true)
+                                        {
+                                            <input type="checkbox" checked class="myCheckbox" data-id="@item.IdSanPham" data-quantity="@item.ISoLuongTonKho">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" class="myCheckbox" data-id="@item.IdSanPham" data-quantity="@item.ISoLuongTonKho">
+                                        }
+
+                                        <span class="slider round"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Details" asp-route-id="@item.IdSanPham">
+                                        <i class="far fa-eye m-r-5 fa-lg"></i>Xem
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Edit" asp-route-id="@item.IdSanPham">
+                                        <i class="far fa-edit m-r-5 fa-lg"></i>Sửa
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Delete" asp-route-id="@item.IdSanPham">
+                                        <i class="far fa-trash-alt m-r-5 fa-lg"></i>Xóa
+                                    </a>
+                                </td>
+
+
+                            </tr>
+                            index = index + 1;
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        // Get the checkbox element
+        var checkboxes = document.querySelectorAll(".myCheckbox");
+        // Lấy tham chiếu đến phần tử div bằng ID "myDiv"
+
+        checkboxes.forEach(function (checkbox) {
+            // Add an event listener to detect changes to the checkbox state
+            checkbox.addEventListener('change', function () {
+                var quantity = $(this).data('quantity');
+                if (checkbox.checked) {
+                    if (quantity < 1) {
+                        var userResponse = window.confirm("Hàng đăng bán hiện tại hết hàng. Bạn có muốn tiếp tục?");
+
+                        // Kiểm tra phản hồi của người dùng
+                        if (userResponse) {
+                            // Người dùng đã chọn "Có"
+                            // Thực hiện hành động tương ứng khi người dùng chọn "Có"
+                            console.log("Người dùng chọn Có");
+                            // Bạn có thể thêm mã để xử lý hành động này
+                        } else {
+                            // Người dùng đã chọn "Không"
+                            // Thực hiện hành động tương ứng khi người dùng chọn "Không"
+                            console.log("Người dùng chọn Không");
+                            checkbox.checked = false;
+                            return false;
+                            // Bạn có thể thêm mã để xử lý hành động này
+                        }
+                    }
+                    console.log("Checkbox is checked");
+
+                } else {
+                    console.log("Checkbox is unchecked");
+                    // Perform actions when the checkbox is unchecked
+                }
+                var id = $(this).data('id');
+                
+                $.ajax({
+                    url: '/AdminSanPham/EditTrangThai',
+                    type: 'GET',
+                    data: { id: id },
+                    dataType: 'json',
+                    success: function (response) {
+                        // Handle the success response
+                        console.log('Sửa trạng thái thành công');
+                        console.log('Response:', response);
+                        location.reload();
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        // Handle errors
+                        console.error('Error:', errorThrown);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $("#txtcatID").change(function () {
+            var catID = jQuery(this).children(":selected").attr("value");
+            catID = parseFloat(catID);
+            $('#txtCatID option')
+                .removeAttr('selected');
+            $("#txtCatID > [value=" + catID + "]").attr("selected", "true");
+            $.ajax({
+                url: '/AdminSanPham/LoadProductByStatus',
+                datatype: "json",
+                type: "GET",
+                data: {
+                    status: catID
+                },
+                async: true,
+                success: function (results) {
+                    $('#records_table').html(results);
+
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            });
+        });
+        /*$("#keyword").keyup(function () {
+            var strkeyword = $('#keyword').val();
+            $.ajax({
+                url: '/Admin/Search/FindProduct/',
+                datatype: "json",
+                type: "POST",
+                data: { keyword: strkeyword },
+                async: true,
+                success: function (results) {
+
+                    $("#records_table").html("");
+                    $("#records_table").html(results);
+                },
+                error: function (xhr) {
+                    alert('error');
+                }
+            });
+        });
+        });*/
+    </script>
+}

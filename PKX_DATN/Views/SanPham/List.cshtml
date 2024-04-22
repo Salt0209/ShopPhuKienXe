@@ -1,0 +1,178 @@
+﻿@using PagedList.Core.Mvc;
+
+@model PagedList.Core.IPagedList<Domain.Models.TblSanPham>
+
+@{
+    TblDanhMuc category = ViewBag.CurrentCat;
+    ViewData["Title"] = category.STenDanhMuc + " " + ViewBag.CurrentPage;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int PageCurrent = ViewBag.CurrentPage;
+
+    int PageNext = PageCurrent + 1;
+    List<TblDanhMuc> DanhSachDanhMuc = ViewBag.DanhMuc;
+}
+
+
+<!-- Begin Main Content Area -->
+<main class="main-content">
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option" style="height: 100px;padding:20px">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Shop</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/index.html">Home</a>
+                            <span>Shop</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+    <!-- Shop Section Begin -->
+    <section class="shop spad" style="padding-top:10px">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="shop__sidebar">
+                        <div class="shop__sidebar__search">
+
+                        </div>
+                        <div class="shop__sidebar__accordion">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseOne">Danh Mục</a>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <ul class="nice-scroll">
+                                                    @foreach (var item in DanhSachDanhMuc)
+                                                    {
+                                                        <li><a href="/@item.IdDanhMuc">@item.STenDanhMuc </a></li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="shop__product__option">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="shop__product__option__left">
+                                    <p>Showing Results</p>
+                                </div>
+                            </div>
+@*                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="shop__product__option__right">
+                                    <p>Sort by Price:</p>
+                                    <select>
+                                        <option value="">Low To High</option>
+                                        <option value="">High To Low</option>
+                                    </select>
+                                </div>
+                            </div>*@
+                        </div>
+                    </div>
+                    <div class="row">
+                        @if (Model != null && Model.Count() > 0)
+                        {
+                            foreach (var item in Model)
+                            {
+                                string url = $"/{item.Alias}-{item.IdSanPham}.html";
+                                <div class="col-lg-4 col-md-6 col-sm-6">
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg">
+                                            <a href="@url">
+                                                <img src="~/images/products/@item.SHinhAnh" alt="@item.STenSanPham">
+                                            </a>
+
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6>@item.STenSanPham</h6>
+                                            @*  <a href="javascript:void(0)" class="add-to-cart">+ Add To Cart</a>*@
+                                            <div class="rating">
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                            <h5><span class="new-price">@item.FGiaTien.Value.ToString("#,##0") VNĐ</span></h5>
+                                            <div class="product__color__select">
+                                                <label for="pc-4">
+                                                    <input type="radio" id="pc-4">
+                                                </label>
+                                                <label class="active black" for="pc-5">
+                                                    <input type="radio" id="pc-5">
+                                                </label>
+                                                <label class="grey" for="pc-6">
+                                                    <input type="radio" id="pc-6">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shop Section End -->
+</main>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<!-- Main Content Area End Here -->
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(function () {
+                $(".add-to-cart").click(function () {
+                    var productid = $('#ProductId').val();
+                    var soluong = $('#txtsoluong').val();
+                    $.ajax({
+                        url: '/api/cart/add',
+                        type: "POST",
+                        dataType: "JSON",
+                        data: {
+                            productID: productid,
+                            amount: soluong + 1
+                        },
+                        success: function (response) {
+                            loadHeaderCart();
+                            location.reload();
+                        },
+                        error: function (error) {
+                            alert("There was an error posting the data to the server" + error.responseText);
+                        }
+                    });
+                });
+            });
+        });
+
+        function loadHeaderCart() {
+            $("#miniCart").load("/AjaxContent/HeaderCart");
+            $("#numberCart").load("/AjaxContent/NumberCart");
+        }
+
+    </script>
+}

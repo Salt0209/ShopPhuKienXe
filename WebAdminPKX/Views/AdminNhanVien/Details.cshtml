@@ -1,0 +1,42 @@
+﻿@model Domain.Models.TblNhanVien
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Chi tiết thông tin</h1>
+
+<div>
+    <h4>TblNhanVien</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SSdt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SSdt)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SEmail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SEmail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SHoTen)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SHoTen)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IdQuyenHanNavigation)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IdQuyenHanNavigation.IdQuyenHan)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.IdNhanVien">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,9 @@
+﻿@model List<PKX_DATN.ModelViews.SanPhamGioHang>
+@if (Model != null && Model.Count() > 0)
+{
+    <span class="quantity">@Model.Count()</span>
+}
+else
+{
+    <span class="quantity">0</span>
+}

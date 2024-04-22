@@ -1,0 +1,170 @@
+﻿@using PagedList.Core.Mvc;
+@model PagedList.Core.IPagedList<Domain.Models.TblDonHang>
+
+@{
+    int index = 1;
+    int CurrentPage = ViewBag.CurrentPage;
+    ViewData["Title"] = "Index";
+    List<TblTrangThaiDonHang> trangthais = ViewBag.TrangThai;
+}
+
+<div class="page-header">
+
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-controller="Home" asp-action="AdminDonHang" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <span class="breadcrumb-item active">Danh sách đơn hàng: Trang @CurrentPage</span>
+        </nav>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body" style="background-color:#FFF0F5">
+        <h2 class="text-center">Danh sách đơn hàng</h2>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="selectList" class="form-label">Chọn danh sách trạng thái:</label>
+                    <select id="selectList" class="form-select">
+                        <option disabled selected hidden value="">-- Chọn trạng thái --</option>
+                        <option value="null">-- Chọn trạng thái --</option>
+                        @foreach (var i in trangthais)
+                        {
+                            <option value="@i.IdTrangThai">@i.STrangThai</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+
+                        <th>STT</th>
+                        <th>Tên khách hàng</th>
+                        <th>Ngày mua</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody id="productList">
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @index
+                                </td>
+                                <td>
+                                    @item.IdKhachHangNavigation.STenKhachHang
+
+                                </td>
+                                <td>
+                                    @item.DNgayTao
+
+                                </td>
+                                <td>
+                                    @item.FTongTien.Value.ToString("#,##0") VNĐ
+
+                                </td>
+                                <td>
+                                    @switch (item.IdTrangThai)
+                                    {
+                                        case 1:
+                                            <div class="badge badge-info badge-dot m-r-10"></div>
+                                            break;
+                                        case 2:
+                                            <div class="badge badge-warning badge-dot m-r-10"></div>
+                                            break;
+                                        case 3:
+                                            <div class="badge badge-primary badge-dot m-r-10"></div>
+                                            break;
+                                        case 4:
+                                            <div class="badge badge-success badge-dot m-r-10"></div>
+                                            break;
+                                        case 5:
+                                            <div class="badge badge-dark badge-dot m-r-10"></div>
+                                            break;
+                                        case 6:
+                                            <div class="badge badge-danger badge-dot m-r-10"></div>
+
+                                            break;
+                                    }
+                                    <p>@item.IdTrangThaiNavigation.STrangThai</p>
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Details" asp-route-id="@item.IdDonHang"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a>
+                                </td>
+                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+                                {
+                                    <td>
+                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="CapNhatTrangThai" asp-route-id="@item.IdDonHang"><i class="fas fa-sync m-r-5 fa-lg"></i>Đã hoàn thành</a>
+                                    </td>
+                                }
+                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng"))
+                                {
+                                    <td>
+                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Edit" asp-route-id="@item.IdDonHang"><i class="far fa-edit m-r-5 fa-lg"></i>Cập nhật</a>
+                                    </td>
+                                }
+                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+                                {
+                                    <td>
+                                        <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Delete" asp-route-id="@item.IdDonHang"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a>
+                                    </td>
+                                }
+                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đã giao thành công") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+                                {
+                                    <td>
+                                        <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Print" asp-route-id="@item.IdDonHang"><i class="fas fa-print m-r-5 fa-lg"></i>In hoá đơn</a>
+                                    </td>
+                                }
+                            </tr>
+                            index += 1;
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+            <div aria-label="Page navigation example">
+                <ul class="pagination">
+                    <pager class="page-container" list="@Model" options="@PagedListRenderOptions.Bootstrap4PageNumbersOnly" asp-controller="AdminDonHang" asp-action="Index" />
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // JavaScript logic ở đây (nếu cần)
+    $(document).ready(function () {
+        $('#selectList').change(function () {
+            var selectedValue = $(this).val();
+            console.log(selectedValue)// Lấy giá trị được chọn trong select option
+            if (selectedValue !== null) { // Kiểm tra xem giá trị đã chọn có khác null không
+                // Gửi yêu cầu AJAX để tải lại sản phẩm dựa trên idTrangThai
+                $.ajax({
+                    url: '/AdminDonHang/LoadProductByStatus', // Đường dẫn của action method để xử lý yêu cầu AJAX
+                    type: 'GET',
+                    data: { idTrangThai: selectedValue }, // Dữ liệu được gửi đi, trong trường hợp này là idTrangThai
+                    success: function (result) {
+                        // Xử lý kết quả trả về từ server nếu cần
+                        // Ví dụ: cập nhật HTML của sản phẩm
+                        $('#productList').html(result);
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi nếu có
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>

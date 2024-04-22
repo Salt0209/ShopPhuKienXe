@@ -1,0 +1,78 @@
+﻿@model List<TblSanPham>
+@{
+    int index = 1;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+
+            <td>
+                @index
+            </td>
+            <td>
+                @item.STenSanPham
+
+            </td>
+            <td>
+                @item.SMoTa
+            </td>
+            <td>
+                @item.IdDanhMucNavigation.STenDanhMuc
+            </td>
+            <td>
+                @item.FGiaTien.Value.ToString("#,##0") VND
+            </td>
+
+            <td>@item.ISoLuongTonKho</td>
+            <td>
+                <div class="d-flex align-items-center">
+                    <div class="badge badge-success badge-dot m-r-10"></div>
+                    @if (item.BTrangThai)
+                    {
+                        <div>Đang bán</div>
+                    }
+                    else
+                    {
+                        <div>Ẩn</div>
+                    }
+                </div>
+
+            </td>
+            <td>
+                <label class="switch">
+                    @if (item.BTrangThai == true)
+                    {
+                        <input type="checkbox" checked class="myCheckbox" data-id="@item.IdSanPham" data-quantity="@item.ISoLuongTonKho">
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="myCheckbox" data-id="@item.IdSanPham" data-quantity="@item.ISoLuongTonKho">
+                    }
+
+                    <span class="slider round"></span>
+                </label>
+            </td>
+            <td>
+                <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Details" asp-route-id="@item.IdSanPham">
+                    <i class="far fa-eye m-r-5 fa-lg"></i>Xem
+                </a>
+            </td>
+            <td>
+                <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Edit" asp-route-id="@item.IdSanPham">
+                    <i class="far fa-edit m-r-5 fa-lg"></i>Sửa
+                </a>
+            </td>
+            <td>
+                <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminSanPham" asp-action="Delete" asp-route-id="@item.IdSanPham">
+                    <i class="far fa-trash-alt m-r-5 fa-lg"></i>Xóa
+                </a>
+            </td>
+
+
+        </tr>
+        index += 1;
+    }
+}

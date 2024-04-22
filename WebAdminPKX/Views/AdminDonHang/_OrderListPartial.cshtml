@@ -1,0 +1,81 @@
+﻿@model List<TblDonHang>
+@{
+    int index = 1;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @index
+            </td>
+            <td>
+                @item.IdKhachHangNavigation.STenKhachHang
+
+            </td>
+            <td>
+                @item.DNgayTao
+
+            </td>
+            <td>
+                @item.FTongTien.Value.ToString("#,##0") VNĐ
+
+            </td>
+            <td>
+                @switch (item.IdTrangThai)
+                {
+                    case 1:
+                        <div class="badge badge-info badge-dot m-r-10"></div>
+                        break;
+                    case 2:
+                        <div class="badge badge-warning badge-dot m-r-10"></div>
+                        break;
+                    case 3:
+                        <div class="badge badge-primary badge-dot m-r-10"></div>
+                        break;
+                    case 4:
+                        <div class="badge badge-success badge-dot m-r-10"></div>
+                        break;
+                    case 5:
+                        <div class="badge badge-dark badge-dot m-r-10"></div>
+                        break;
+                    case 6:
+                        <div class="badge badge-danger badge-dot m-r-10"></div>
+
+                        break;
+                }
+                <p>@item.IdTrangThaiNavigation.STrangThai</p>
+            </td>
+            <td>
+                <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Details" asp-route-id="@item.IdDonHang"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a>
+            </td>
+            @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+            {
+                <td>
+                    <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="CapNhatTrangThai" asp-route-id="@item.IdDonHang"><i class="fas fa-sync m-r-5 fa-lg"></i>Đã hoàn thành</a>
+                </td>
+            }
+            @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng"))
+            {
+                <td>
+                    <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Edit" asp-route-id="@item.IdDonHang"><i class="far fa-edit m-r-5 fa-lg"></i>Cập nhật</a>
+                </td>
+            }
+            @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+            {
+                <td>
+                    <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Delete" asp-route-id="@item.IdDonHang"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a>
+                </td>
+            }
+            @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đã giao thành công") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
+            {
+                <td>
+                    <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Print" asp-route-id="@item.IdDonHang"><i class="fas fa-print m-r-5 fa-lg"></i>In hoá đơn</a>
+                </td>
+            }
+        </tr>
+        index += 1;
+    }
+}

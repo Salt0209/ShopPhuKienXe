@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Domain.Models.TblDanhMuc>
+
+@{
+    int CurrentPage = 1;
+    ViewData["Title"] = "Danh sách danh mục" + CurrentPage;
+
+}
+<div class="page-header">
+</div>
+<div class="card" style="background-color:#FFF0F5">
+    <div class="card-body">
+        <h2 class="text-center">Danh sách danh mục</h2>
+        <div class="row m-b-30">
+            <div class="col-lg-8">
+            </div>
+            <div class="col-lg-4 text-right">
+                <a class="btn btn-success" asp-controller="AdminDanhMuc" asp-action="Create"> <i class="far fa-plus-square m-r-5 fa-lg"></i><span>Thêm danh mục</span></a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover e-commerce-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên loại</th>
+                        <th>Mô tả</th>
+                        <th>Trạng thái</th>
+                        <th>Chức năng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model) {
+                    <tr>
+                        <td>
+                                @Html.DisplayFor(modelItem => item.IdDanhMuc)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.STenDanhMuc)
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SMoTa)
+                        </td>
+                        <td>
+
+                            <div class="d-flex align-items-center">
+                                <div class="badge badge-success badge-dot m-r-10"></div>
+                                @if (item.BTrangThai)
+                                {
+                                <div>Đã phát hành</div>
+                                }
+                                else
+                                {
+                                <div>Chưa phát hành</div>
+                                }
+                                
+                            </div>
+                        </td>
+
+                        <td>
+                                <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDanhMuc" asp-action="Details" asp-route-id="@item.IdDanhMuc"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a>
+                                <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDanhMuc" asp-action="Edit" asp-route-id="@item.IdDanhMuc"><i class="far fa-edit m-r-5 fa-lg"></i>Sửa</a>
+                                <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminDanhMuc" asp-action="Delete" asp-route-id="@item.IdDanhMuc"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Xóa</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

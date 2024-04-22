@@ -1,0 +1,36 @@
+﻿@model Domain.Models.TblQuyenHan
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Thông tin</h1>
+
+<div>
+    <h4>TblQuyenHan</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.STenQuyenHan)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.STenQuyenHan)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SMoTa)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SMoTa)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IMucDoSuDung)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IMucDoSuDung)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.IdQuyenHan">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

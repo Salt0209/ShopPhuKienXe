@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Domain.Models.TblQuyenHan>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<p class="mb-3">
+    <a class="btn btn-primary" asp-action="Create">Tạo mới</a>
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">@Html.DisplayNameFor(model => model.STenQuyenHan)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.SMoTa)</th>
+                        <th scope="col">@Html.DisplayNameFor(model => model.IMucDoSuDung)</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@Html.DisplayFor(modelItem => item.STenQuyenHan)</th>
+                            <td>@Html.DisplayFor(modelItem => item.SMoTa)</td>
+                            <td>@Html.DisplayFor(modelItem => item.IMucDoSuDung)</td>
+                            <td>
+                                <a class="btn btn-success" href="@Url.Action("Edit", "AdminQuyenHan",new {id=item.IdQuyenHan})">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <a class="btn btn-danger" href="@Url.Action("Delete", "AdminQuyenHan",new {id=item.IdQuyenHan})">
+                                    <i class="far fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

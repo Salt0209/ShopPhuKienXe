@@ -1,0 +1,126 @@
+﻿@model Domain.Models.TblDonHang
+
+@{
+    ViewData["Title"] = "Edit";
+    List<TblChiTietDonHang> orderDetails = ViewBag.ChiTiet;
+}
+
+
+<div class="page-header">
+    <h2 class="header-title">Sửa đơn hàng</h2>
+    <div class="header-sub-title">
+        <nav class="breadcrumb breadcrumb-dash">
+            <a asp-controller="AdminDonHang" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a class="breadcrumb-item" asp-controller="AdminDonHang" asp-action="Index">Danh sách đơn hàng</a>
+
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="modal-body">
+        <form asp-action="Edit">
+            <div class="card">
+                <div class="card-body" style="background-color:#FAEAEA">
+                    <div class="row">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="IdDonHang" />
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IdKhachHang" class="control-label">Mã khách hàng</label>
+                                <select asp-for="IdKhachHang" class="form-control" asp-items="@((SelectList)ViewData["IdKhachHang"])"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DNgayTao" class="control-label">Ngày mua</label>
+                                <input asp-for="DNgayTao" class="form-control" />
+                                <span asp-validation-for="DNgayTao" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IdTrangThai" class="control-label">Trạng thái đơn hàng</label>
+                                <select asp-for="IdTrangThai" class="form-control" asp-items="@((SelectList)ViewData["IdTrangThai"])"></select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SGhiChu" class="control-label"></label>
+                                <input asp-for="SGhiChu" class="form-control" />
+                                <span asp-validation-for="SGhiChu" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="SDiaChi" class="control-label">Địa chỉ</label>
+                                <input asp-for="SDiaChi" class="form-control" />
+                                <span asp-validation-for="SDiaChi" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FPhiVanChuyen" class="control-label">Phí vận chuyển</label>
+                                <input asp-for="FPhiVanChuyen" class="form-control" />
+                                <span asp-validation-for="FPhiVanChuyen" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FTongTien" class="control-label">Tổng tiền: @(Model.FTongTien?.ToString("#,##0") ?? "N/A") VND</label>
+                            </div>
+                        </div>
+                        <br />
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Tổng tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (orderDetails != null && orderDetails.Count() > 0)
+                                {
+                                    int i = 1;
+                                    foreach (var item in orderDetails)
+                                    {
+                                        string url = "/";
+                                        <tr>
+                                            <th>@i</th>
+                                            <td><a href="/AdminSanPham/Details/@item.IdSanPham">@item.IdSanPham</a></td>
+                                            <td>@item.ISoLuong</td>
+                                            <td>@item.FTongTien.ToString("#,##0") VND</td>
+                                            <td>@((item.ISoLuong * item.FTongTien).ToString("#,##0")) VND</td>
+
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-info "><i class="far fa-save m-r-5 fa-lg"></i>Cập nhật</button>
+                    <button class="btn btn-warning"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+</div>
+
+
