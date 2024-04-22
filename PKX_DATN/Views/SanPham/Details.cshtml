@@ -142,12 +142,11 @@
                         },
                         success: function (response) {
                             if (response.success) {
-                                console.log("success");
-                                window.loadHeaderCart();
+
+                                $('.quantity').text(response.itemCount);
                             }
                             else if (!response.success) {
-                                alert("Đã có trong giỏ hàng");
-                                window.loadHeaderCart();
+                                alert("Chưa đăng nhập");
                             }
                             else {
                                 alert("" + response.message);

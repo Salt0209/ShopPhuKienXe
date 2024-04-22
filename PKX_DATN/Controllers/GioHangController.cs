@@ -56,16 +56,8 @@ namespace PKX_DATN.Controllers
                 SanPhamGioHang item = GioHang.SingleOrDefault(p => p.SanPham.IdSanPham == productID);
                 if (item != null)//da co --> capnhat so luong
                 {
-                    /*if (amount.HasValue)
-                    {
-                        item.amount = amount.Value;
-
-                    }
-                    else
-                    {
-                        item.amount++;
-                    }*/
-                    return Json(new { success = false });
+                    _notyfService.Information("Sản phẩm đã có trong giỏ hàng");
+                    return Json(new { success = true });
 
                 }
                 else
@@ -82,7 +74,8 @@ namespace PKX_DATN.Controllers
                 //luu lai Session
                 HttpContext.Session.Set<List<SanPhamGioHang>>("GioHang", gioHang);
                 _notyfService.Success("Thêm sản phẩm thành công");
-                return Json(new { success = true });
+                int cartItemCount = gioHang.Count();
+                return Json(new { success = true, itemCount = cartItemCount });
             }
             catch
             {
