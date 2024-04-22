@@ -41,7 +41,7 @@ namespace WebAdminPKX.Controllers
                 case 2: sanPhams = sanPhams.Where(t => t.BTrangThai == false)
                         .OrderByDescending(t=>t.DNgaySua);
                 break;
-            }
+        }
 
             // Trả về một phần tử HTML hoặc một PartialView chứa danh sách đơn hàng
             return PartialView("_ProductListPartial", sanPhams.ToList());
