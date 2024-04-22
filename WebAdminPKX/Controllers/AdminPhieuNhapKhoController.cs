@@ -68,13 +68,6 @@ namespace WebAdminPKX.Controllers
         {
             ViewData["IdNhanVien"] = new SelectList(_context.TblNhanViens, "IdNhanVien", "IdNhanVien");
             ViewData["IdNhaCungCap"] = new SelectList(_context.TblNhaCungCaps, "IdNhaCungCap", "STenNhaCungCap");
-            List<SelectListItem> items = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Mở", Value = "true" },
-                new SelectListItem { Text = "Khoá", Value = "false" }
-            };
-
-            ViewBag.TrangThai = new SelectList(items, "Value", "Text");
             return View();
         }
 
@@ -87,7 +80,7 @@ namespace WebAdminPKX.Controllers
         {
             if (ModelState.IsValid)
             {
-                tblPhieuNhapKho.BTrangThai = false;
+                tblPhieuNhapKho.BTrangThai = true;
                 _context.Add(tblPhieuNhapKho);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -112,9 +105,9 @@ namespace WebAdminPKX.Controllers
             }
 
 
-            if (tblPhieuNhapKho.BTrangThai == true)
+            if (tblPhieuNhapKho.BTrangThai == false)
             {
-                _notyfService.Warning("Phiếu đã khoá");
+                _notyfService.Error("Phiếu đã khoá");
                 return RedirectToAction("Index");
             }
 
@@ -122,8 +115,8 @@ namespace WebAdminPKX.Controllers
             ViewData["IdNhaCungCap"] = new SelectList(_context.TblNhaCungCaps, "IdNhaCungCap", "STenNhaCungCap", tblPhieuNhapKho.IdNhaCungCap);
             List<SelectListItem> items = new List<SelectListItem>
     {
-        new SelectListItem { Text = "Khoá", Value = "true" },
-        new SelectListItem { Text = "Mở", Value = "false" }
+        new SelectListItem { Text = "Mở", Value = "true" },
+        new SelectListItem { Text = "Khoá", Value = "false" }
     };
 
             ViewBag.TrangThai = new SelectList(items, "Value", "Text");
@@ -183,9 +176,21 @@ namespace WebAdminPKX.Controllers
             var tblPhieuNhapKho = await _context.TblPhieuNhapKhos
                 .Include(t => t.IdNhanVienNavigation)
                 .FirstOrDefaultAsync(m => m.IdPhieuNhapKho == id);
+
             if (tblPhieuNhapKho == null)
             {
                 return NotFound();
+            }
+
+            if (tblPhieuNhapKho.BTrangThai == false)
+            {
+                _notyfService.Error("Phiếu đã khoá");
+                return RedirectToAction("Index");
+            }
+            if(_context.TblChiTietPhieuNhapKhos.AsNoTracking().FirstOrDefault(t=>t.IdPhieuNhapKho==id) != null)
+            {
+                _notyfService.Warning("Không thể xoá phiếu đã nhập sản phẩm");
+                return RedirectToAction("Index");
             }
 
             return View(tblPhieuNhapKho);
@@ -230,6 +235,7 @@ namespace WebAdminPKX.Controllers
                 var updateProduct = _context.TblSanPhams.FirstOrDefault(p=> p.IdSanPham==id);
                 updateProduct.ISoLuongTonKho += tblChiTietPhieuNhapKho.ISoLuongNhap;
                 _context.Update(updateProduct);
+
                 _context.Add(tblChiTietPhieuNhapKho);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Edit", new { id = tblChiTietPhieuNhapKho.IdPhieuNhapKho });
@@ -251,6 +257,7 @@ namespace WebAdminPKX.Controllers
             {
                 return NotFound();
             }
+
             ViewData["IdSanPham"] = new SelectList(_context.TblSanPhams, "IdSanPham", "STenSanPham");
             ViewBag.Id = id;
             return View(tblCTNhapKhos);
@@ -268,6 +275,22 @@ namespace WebAdminPKX.Controllers
             {
                 try
                 {
+                    //lay so luong cu
+                    var oldQuantity = _context.TblChiTietPhieuNhapKhos.AsNoTracking().FirstOrDefault(p => p.IdChiTietPhieuNhapKho == id).ISoLuongNhap;
+
+                    //them so luong moi
+                    var idP = tblChiTietPhieuNhapKho.IdSanPham;
+                    var updateProduct = _context.TblSanPhams.FirstOrDefault(p => p.IdSanPham == idP);
+                    updateProduct.ISoLuongTonKho = updateProduct.ISoLuongTonKho - oldQuantity + tblChiTietPhieuNhapKho.ISoLuongNhap;
+
+                    if (updateProduct.ISoLuongTonKho < 0)
+                    {
+                        _notyfService.Error("Số lượng tồn không được <0");
+                        return RedirectToAction("Edit", new { id = tblChiTietPhieuNhapKho.IdPhieuNhapKho });
+                    }
+                    
+                    _context.Update(updateProduct);
+
                     _context.Update(tblChiTietPhieuNhapKho);
                     await _context.SaveChangesAsync();
                 }
@@ -310,10 +333,24 @@ namespace WebAdminPKX.Controllers
         public async Task<IActionResult> XoaSanPhamConfirmed(int id, [Bind("IdPhieuNhapKho")] TblChiTietPhieuNhapKho idPhieu)
         {
             var tblChiTietPhieuNhapKhos = await _context.TblChiTietPhieuNhapKhos.FindAsync(id);
-            if (tblChiTietPhieuNhapKhos != null)
+            if (tblChiTietPhieuNhapKhos == null)
             {
-                _context.TblChiTietPhieuNhapKhos.Remove(tblChiTietPhieuNhapKhos);
+                return NotFound(id);
             }
+
+            var idP = tblChiTietPhieuNhapKhos.IdSanPham;
+            var updateProduct = _context.TblSanPhams.FirstOrDefault(p => p.IdSanPham == idP);
+            updateProduct.ISoLuongTonKho -= tblChiTietPhieuNhapKhos.ISoLuongNhap;
+
+            if(updateProduct.ISoLuongTonKho < 0)
+            {
+                _notyfService.Error("Xoá thất bại do số lượng tồn không được <0");
+                return RedirectToAction("Edit", new { id = idPhieu.IdPhieuNhapKho });
+            }
+
+            _context.Update(updateProduct);
+
+            _context.TblChiTietPhieuNhapKhos.Remove(tblChiTietPhieuNhapKhos);
 
             await _context.SaveChangesAsync();
             return RedirectToAction("Edit", new { id = idPhieu.IdPhieuNhapKho });

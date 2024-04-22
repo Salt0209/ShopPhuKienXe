@@ -11,7 +11,7 @@
 
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
-            <a asp-controller="Home" asp-action="AdminDonHang" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
             <span class="breadcrumb-item active">Danh sách phiếu nhập: Trang @CurrentPage</span>
         </nav>
     </div>
@@ -75,18 +75,22 @@
                                     @if (@item.BTrangThai)
                                     {
                                         <div class="badge badge-success badge-dot m-r-10"></div>
-                                        <p>Khoá</p>
+                                        <p>Mở</p>
                                     }
                                     else
                                     {
-                                        <div class="badge badge-warning badge-dot m-r-10"></div>
-                                        <p>Mở</p>
+                                        <div class="badge badge-danger badge-dot m-r-10"></div>
+                                        <p>Khoá</p>
                                     }
 
                                 </td>
                                 <td>
                                     <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminPhieuNhapKho" asp-action="Details" asp-route-id="@item.IdPhieuNhapKho"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a>
+                                </td>
+                                <td>
                                     <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminPhieuNhapKho" asp-action="Edit" asp-route-id="@item.IdPhieuNhapKho"><i class="far fa-edit m-r-5 fa-lg"></i>Sửa</a>
+                                </td>
+                                <td>
                                     <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminPhieuNhapKho" asp-action="Delete" asp-route-id="@item.IdPhieuNhapKho"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Xóa</a>
                                 </td>
                             </tr>
