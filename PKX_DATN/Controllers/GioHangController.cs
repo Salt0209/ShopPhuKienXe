@@ -10,6 +10,8 @@ using PKX_DATN.Extension;
 using Domain.Models;
 using PKX_DATN.ModelViews;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace PKX_DATN.Controllers
 {
@@ -132,6 +134,28 @@ namespace PKX_DATN.Controllers
         public IActionResult Index()
         {
             return View(GioHang);
+        }
+        [HttpGet]
+        public JsonResult TrangGioHang(int id)
+        {
+            if (id != 0)
+            {
+                var tcn = _context.TblChiTietDonHangs
+                .Where(t => t.IdDonHang == id)
+                .Select(t=> new
+                {
+                    idSanPham = t.IdSanPham,
+                    tenSanPham = t.IdSanPhamNavigation.STenSanPham,
+                    iSoLuong = t.ISoLuong,
+                    fTongTien = t.FTongTien
+                })
+                .AsNoTracking().ToList();
+                return Json(new { code = 200, tcn = tcn, msg = "thành công" });
+            }
+            else
+            {
+                return Json(new { code = 500, msg = "thất bại" });
+            }
         }
     }
 }

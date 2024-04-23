@@ -16,4 +16,5 @@ public partial class TblChiTietDonHang
     public int FTongTien { get; set; }
 
     public virtual TblDonHang? IdDonHangNavigation { get; set; }
+    public virtual TblSanPham? IdSanPhamNavigation { get; set; }
 }
