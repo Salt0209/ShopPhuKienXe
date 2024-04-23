@@ -91,38 +91,33 @@ namespace PKX_DATN.Controllers
             }
             try
             {
+                //khoi tao don hang
+                TblDonHang donhang = new TblDonHang();
+                donhang.IdKhachHang = Int32.Parse(taikhoanID.ToString());
+                donhang.SDiaChi = muaHang.sDiaChi;
+                donhang.DNgayTao = DateTime.Now;
+                donhang.IdTrangThai = 1; //don hang moi            
+                donhang.SGhiChu = Utilities.StripHTML(model.sGhiChu);
+                donhang.FTongTien = Convert.ToInt32(giohang.Sum(x => x.TotalMoney));
+                _context.Add(donhang);
+                _context.SaveChanges();
 
-                    //khoi tao don hang
-                    TblDonHang donhang = new TblDonHang();
-                    donhang.IdKhachHang = Int32.Parse(taikhoanID.ToString());
-                    donhang.SDiaChi = model.sDiaChi;
-                    //donhang.LocationID = model.TinhThanh;
-                    //donhang.District = model.QuanHuyen;
-                    //donhang.Ward = model.PhuongXa;
-
-                    donhang.DNgayTao = DateTime.Now;
-                    donhang.IdTrangThai = 1; //don hang moi            
-                    donhang.SGhiChu = Utilities.StripHTML(model.sGhiChu);
-                    donhang.FTongTien = Convert.ToInt32(giohang.Sum(x => x.TotalMoney));
-                    _context.Add(donhang);
-                    _context.SaveChanges();
-
-                    //Tao danh sach don hang
-                    foreach (var item in giohang)
-                    {
-                        TblChiTietDonHang orderDetail = new TblChiTietDonHang();
-                        orderDetail.IdDonHang = donhang.IdDonHang;
-                        orderDetail.IdSanPham = item.SanPham.IdSanPham;
-                        orderDetail.ISoLuong = item.amount;
-                        orderDetail.FTongTien = donhang.FTongTien.GetValueOrDefault();
-                        _context.Add(orderDetail);
-                    }
-                    _context.SaveChanges();
-                    //Clear cart
-                    HttpContext.Session.Remove("GioHnag");
-                    _notyfService.Success("Đơn hàng đặt thành công");
-                    //cap nhat thong tin khach hang
-                    return RedirectToAction("Success");
+                //Tao danh sach don hang
+                foreach (var item in giohang)
+                {
+                    TblChiTietDonHang orderDetail = new TblChiTietDonHang();
+                    orderDetail.IdDonHang = donhang.IdDonHang;
+                    orderDetail.IdSanPham = item.SanPham.IdSanPham;
+                    orderDetail.ISoLuong = item.amount;
+                    orderDetail.FTongTien = donhang.FTongTien.GetValueOrDefault();
+                    _context.Add(orderDetail);
+                }
+                _context.SaveChanges();
+                //Clear cart
+                HttpContext.Session.Remove("GioHnag");
+                _notyfService.Success("Đơn hàng đặt thành công");
+                //cap nhat thong tin khach hang
+                return RedirectToAction("Success");
             }
             catch
             {

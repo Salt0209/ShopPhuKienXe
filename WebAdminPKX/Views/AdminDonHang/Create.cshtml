@@ -1,7 +1,9 @@
-﻿@model Domain.Models.TblDonHang
+﻿@model TblKhachHang
 
 @{
     ViewData["Title"] = "Create";
+    var ttKH = ViewBag.KhachHang;
+    List<TblChiTietDonHang> orderDetails = ViewBag.ChiTiet;
 }
 
 
@@ -9,83 +11,201 @@
     <h2 class="header-title">Thêm đơn hàng</h2>
     <div class="header-sub-title">
         <nav class="breadcrumb breadcrumb-dash">
-            <a asp-controller="Home" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+            <a asp-controller="HomeAdmin" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
             <a class="breadcrumb-item" asp-controller="AdminDonHang" asp-action="Index">Danh sách đơn hàng</a>
 
         </nav>
     </div>
 </div>
 
+
 <div class="row">
     <div class="modal-body" style="background-color:#FAEAEA">
         <div class="card">
             <div class="card-body" style="background-color:#FAEAEA">
-                <form asp-action="Create">
+                <form asp-action="CreateOrder">
+                    <div class="row">
+                        <div class="form-group">
+                            <button id="add" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fas fa-plus"></i> Thêm sản phẩm</button>
+                            |
+                            <button type="submit" class="btn btn-info  m-r-5"><i class="far fa-save m-r-5 fa-lg"></i>Lưu</button>
+                        </div>
+                    </div>
                     <div class="row">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" name="IdKhachHang" value="@Model.IdKhachHang"/>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="IdKhachHang" class="control-label">Mã khách hàng *</label>
-                                <select asp-for="IdKhachHang" class="form-control" asp-items="ViewBag.IdKhachHang"></select>
+                                <label class="control-label d-block">Tên khách hàng: @Model.STenKhachHang</label>
+                                <label class="control-label d-block">Email: @Model.SEmail</label>
+                                <label class="control-label d-block">Số điện thoại: @Model.SSdt</label>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label asp-for="DNgayTao" class="control-label">Ngày mua *</label>
-                                <input asp-for="DNgayTao" class="form-control" />
-                                <span asp-validation-for="DNgayTao" class="text-danger"></span>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="IdTrangThai" class="control-label">Trạng thái đơn hàng *</label>
-                                <select asp-for="IdTrangThai" class="form-control" asp-items="ViewBag.IdTrangThai"></select>
+                                <label class="control-label">Tổng tiền sản phẩm</label>
+                                <h4 asp-for="FTongTien" class="cart__total" id="tongtien"/>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="SGhiChu" class="control-label">Ghi chú</label>
-                            <input asp-for="SGhiChu" class="form-control" />
-                            <span asp-validation-for="SGhiChu" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="SDiaChi" class="control-label">Địa chỉ *</label>
-                            <input asp-for="SDiaChi" class="form-control" />
-                            <span asp-validation-for="SDiaChi" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="FPhiVanChuyen" class="control-label">Phí vận chuyển</label>
-                            <input asp-for="FPhiVanChuyen" class="form-control" />
-                            <span asp-validation-for="FPhiVanChuyen" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="FTongTien" class="control-label">Tổng tiền *</label>
-                            <input asp-for="FTongTien" class="form-control" />
-                            <span asp-validation-for="FTongTien" class="text-danger"></span>
-                        </div>
-                    </div>
                     <br />
-                    <div class="col-md-6">
+
+                    <div class="row-cols-md-auto">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        <th>Tổng tiền</th>
+                                        <th>Chức năng</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ds__cart">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="form-group">
                             <button type="submit" class="btn btn-info  m-r-5"><i class="far fa-save m-r-5 fa-lg"></i>Lưu</button>
-                            |
-                            <a class="btn btn-warning   m-r-5" asp-action="Index"> <i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</a>
-
                         </div>
                     </div>
-            </form>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal post-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm mới sản phẩm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="maCT" hidden />
+                <div class="form-group">
+                    <label>Sản phẩm</label>
+                    <select class="form-select" id="sanpham">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sl">Số lượng nhập</label>
+                    <input type="number" class="form-control" id="sl" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-primary" id="myButton">Thêm sản phẩm</button>
+            </div>
         </div>
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/AdminSanPham/SanPham',
+                Type: 'get',
+                success: function (data) {
+                    if (data.code == 200) {
+                        $('#sanpham').empty();
+                        $.each(data.dssp, function (k, v) {
+                            let tr = '<option value="' + v.idSanPham + '">' + v.sTenSanPham + '</option>';
+                            $('#sanpham').append(tr);
+                        });
+                    }
+                }
+            });
+        });
+        $('#add').on('click', function (event) {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của sự kiện click
+
+            // Thực hiện các hành động khác ở đây
+        });
+        $('#myButton').click(function () {
+            var sanpham = $('#sanpham').val().trim();
+            var sl = $('#sl').val().trim();
+            if (sl == null || sl == '' || sl < 0) {
+                alert("Số lượng là 1 số > 0");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('productID', sanpham);
+            formData.append('amount', sl);
+
+            $.ajax({
+                url: '/AdminDonHang/AddToCart',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        $('#sanpham').val('');
+                        $('#sl').val('');
+                        loadCart();
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        });
+        $(document).on('click', ".btn__xoa", function () {
+            var pid = $(this).data('id');
+            if (confirm("Bạn thật sự muốn xóa sản phẩm này?")) {
+                $.ajax({
+                    url: '/AdminDonHang/RemoveFromCart',
+                    type: 'post',
+                    data: { productID: pid },
+                    success: function (data) {
+                        if (data.success) {
+                            loadCart();
+                            alert(data.msg)
+                        }
+                        else {
+                            alert(data.msg)
+                        }
+                    }
+                });
+            }
+
+        });
+        function loadCart() {
+            $.ajax({
+                url: '/AdminDonHang/DSCart',
+                Type: 'get',
+                success: function (data) {
+                    //console.log(data)
+                    if (data.code == 200) {
+                        $('#ds__cart').empty();
+                        $('#tongtien').empty();
+                        var tong = 0;
+                        $.each(data.dsc, function (index, item) {
+                            let tr = '<tr><th>' + (index + 1) + '</th>';
+                            tr += '<td>' + item.sanPham.sTenSanPham + '</td>';
+                            tr += '<td>' + item.amount + '</td>';
+                            tr += '<td>' + Intl.NumberFormat('vi-VN').format(item.totalMoney) + '</td>';
+                            tr += '<td>' + Intl.NumberFormat('vi-VN').format(item.amount * item.totalMoney) + '</td>';
+                            tr += '<td><a class="btn__xoa btn btn-danger" data-id=' + item.sanPham.idSanPham+ '><i class="fas fa-trash"></i>Xoá</a></td></tr>';
+                            tong += (item.amount * item.totalMoney);
+                            $('#ds__cart').append(tr);
+                        });
+                        $("#tongtien").text(Intl.NumberFormat('vi-VN').format(tong));
+                    }
+                }
+            });
+        }
+    </script>
+
+}

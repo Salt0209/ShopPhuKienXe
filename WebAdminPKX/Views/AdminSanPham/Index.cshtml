@@ -24,7 +24,7 @@
                     <div class="col-md-6">
                         <div class="input-affix m-v-10">
                             <i class="prefix-icon anticon anticon-search opacity-04"></i>
-                            <input id="keyword" name="keyword" type="text" class="form-control" placeholder="Tìm kiếm... ">
+                            <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search...">
                         </div>
                     </div>
                 </div>
@@ -277,24 +277,25 @@
                 }
             });
         });
-        /*$("#keyword").keyup(function () {
-            var strkeyword = $('#keyword').val();
-            $.ajax({
-                url: '/Admin/Search/FindProduct/',
-                datatype: "json",
-                type: "POST",
-                data: { keyword: strkeyword },
-                async: true,
-                success: function (results) {
 
-                    $("#records_table").html("");
-                    $("#records_table").html(results);
-                },
-                error: function (xhr) {
-                    alert('error');
+        document.getElementById("searchInput").addEventListener("input", function () {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("records_table");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1]; // Chỉ tìm kiếm trong cột thứ hai (tên sản phẩm)
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
-            });
+            }
         });
-        });*/
     </script>
 }

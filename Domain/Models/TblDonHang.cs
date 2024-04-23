@@ -9,6 +9,10 @@ public partial class TblDonHang
     {
         TblChiTietDonHangs = new HashSet<TblChiTietDonHang>();
     }
+    public TblDonHang(int id,int trangthai)
+    {
+        IdTrangThai = trangthai;
+    }
     public int IdDonHang { get; set; }
 
     public int? IdKhachHang { get; set; }

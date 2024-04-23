@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKX_DATN", "PKX_DATN\PKX_DA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAdminPKX", "WebAdminPKX\WebAdminPKX.csproj", "{6A863688-8F3C-43E7-88D1-8CD587D25EE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{952C69FB-7F47-4207-8693-E389F2067AC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{952C69FB-7F47-4207-8693-E389F2067AC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -76,7 +76,7 @@ namespace WebAdminPKX.Areas.Admin.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home"); // Chuyển hướng đến trang chính của ứng dụng nếu không có returnUrl hoặc returnUrl không hợp lệ
+                        return RedirectToAction("Index", "HomeAdmin"); // Chuyển hướng đến trang chính của ứng dụng nếu không có returnUrl hoặc returnUrl không hợp lệ
                     }
                 }
             }
