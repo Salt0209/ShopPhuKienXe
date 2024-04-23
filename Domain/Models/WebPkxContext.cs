@@ -55,6 +55,9 @@ public partial class WebPkxContext : DbContext
             entity.HasOne(d => d.IdDonHangNavigation).WithMany(p => p.TblChiTietDonHangs)
                 .HasForeignKey(d => d.IdDonHang)
                 .HasConstraintName("FK_ChiTietDonHang_DonHang");
+            entity.HasOne(d => d.IdSanPhamNavigation).WithMany(p => p.TblChiTietDonHangs)
+                .HasForeignKey(d => d.IdSanPham)
+                .HasConstraintName("FK_ChiTietDonHang_SanPham");
         });
         modelBuilder.Entity<TblPhieuNhapKho>(entity =>
         {

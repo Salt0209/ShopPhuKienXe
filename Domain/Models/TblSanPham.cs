@@ -8,6 +8,7 @@ public partial class TblSanPham
     public TblSanPham() 
     {
         TblChiTietPhieuNhapKhos = new HashSet<TblChiTietPhieuNhapKho>();
+        TblChiTietDonHangs = new HashSet<TblChiTietDonHang>();
     }
     public int IdSanPham { get; set; }
 
@@ -35,4 +36,5 @@ public partial class TblSanPham
 
     public virtual TblDanhMuc? IdDanhMucNavigation { get; set; }
     public virtual ICollection<TblChiTietPhieuNhapKho> TblChiTietPhieuNhapKhos { get; set; } = new List<TblChiTietPhieuNhapKho>();
+    public virtual ICollection<TblChiTietDonHang> TblChiTietDonHangs { get; set; } = new List<TblChiTietDonHang>();
 }

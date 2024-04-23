@@ -10,17 +10,15 @@
                     <th>Họ và tên</th>
                     <th>Trạng thái</th>
                     <th>Tổng tiền</th>
-                 
                 </tr>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td><a class="account-order-id" href="javascript:void(0)">@item.IdDonHang</a></td>
+                        <td><a class="account-order-id" href="javascript:void(0)" data-order-id="@item.IdDonHang">@item.IdDonHang</a></td>
                         <td>@item.DNgayTao</td>
                         <td>@item.IdKhachHangNavigation.STenKhachHang</td>
                         <td>@item.IdTrangThaiNavigation.STrangThai</td>
                         <td>@item.FTongTien.Value.ToString("#,##0") VNĐ</td>
-                      >
                     </tr>
                 }
             </tbody>
@@ -31,4 +29,68 @@ else
 {
     <p>Chưa có đơn hàng</p>
 }
+
+<div class="modal fade" id="xem" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title fs-5" id="exampleModalLabel">Chi tiết đơn hàng:</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-title ml-2">
+                <h3 style="display:block" id="orderid"></h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-hover">
+                    <tbody id="trang__cn">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).on('click', ".account-order-id", function () {
+        var usid = $(this).data('order-id');
+        $.ajax({
+            url: '/GioHang/TrangGioHang',
+            Type: 'get',
+            data: { id: usid },
+            success: function (data) {
+                console.log(data.tcn);
+                console.log(usid);
+                $('#trang__cn').empty();
+                if (data.code == 200) {
+                    let tr = '<tr class="text-center">';
+                    tr += '<th>STT</th>';
+                    tr += '<th>Tên sản phẩm</th>';
+                    tr += '<th>Số lượng </th>';
+                    tr += '<th>Đơn giá</th>';
+                    tr += '<th>Tổng tiền</th>';
+                    tr += '</tr>';
+
+                    $.each(data.tcn, function (index, item) {
+                        tr += '<tr>';
+                        tr += '<td>' + (index+1) + '</td>';
+                        tr += '<td>' + item.tenSanPham + '</td>';
+                        tr += '<td>' + item.iSoLuong + '</td>';
+                        tr += '<td>' + item.fTongTien + '</td>';
+                        tr += '<td>' + (item.iSoLuong * item.fTongTien) + '</td>';
+                        tr += '</tr>';
+                    });
+                    $('#orderid').text("Mã đơn:" + usid);
+                    $('#trang__cn').append(tr);
+                    $('#xem').modal('show');
+                }
+            }
+        });
+    });
+</script>
+
+
 
