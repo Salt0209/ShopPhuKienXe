@@ -17,7 +17,17 @@
                         <td><a class="account-order-id" href="javascript:void(0)" data-order-id="@item.IdDonHang">@item.IdDonHang</a></td>
                         <td>@item.DNgayTao</td>
                         <td>@item.IdKhachHangNavigation.STenKhachHang</td>
-                        <td>@item.IdTrangThaiNavigation.STrangThai</td>
+                        <td>
+                            @if (item.IdTrangThai == 1)
+                            {
+                                @item.IdTrangThaiNavigation.STrangThai <a class="fa-red-river">Huỷ</a>
+                            }
+                            else
+                            {
+                                @item.IdTrangThaiNavigation.STrangThai
+                            }
+
+                        </td>
                         <td>@item.FTongTien.Value.ToString("#,##0") VNĐ</td>
                     </tr>
                 }
@@ -76,7 +86,7 @@ else
 
                     $.each(data.tcn, function (index, item) {
                         tr += '<tr>';
-                        tr += '<td>' + (index+1) + '</td>';
+                        tr += '<td>' + (index + 1) + '</td>';
                         tr += '<td>' + item.tenSanPham + '</td>';
                         tr += '<td>' + item.iSoLuong + '</td>';
                         tr += '<td>' + item.fTongTien + '</td>';

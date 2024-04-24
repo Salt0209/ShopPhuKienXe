@@ -80,7 +80,7 @@ namespace PKX_DATN.Controllers
                         .Include(x => x.IdKhachHangNavigation)
                         .AsNoTracking()
                         .Where(x => x.IdKhachHang == khachhang.IdKhachHang)
-                        .OrderByDescending(x => x.DNgayTao).ToList();
+                        .OrderBy(x => x.IdTrangThai).ToList();
                     ViewBag.DonHang = lsDonHang;
                     return View(khachhang);
                 }

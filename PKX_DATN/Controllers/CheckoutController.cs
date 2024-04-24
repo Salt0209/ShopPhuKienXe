@@ -114,7 +114,7 @@ namespace PKX_DATN.Controllers
                 }
                 _context.SaveChanges();
                 //Clear cart
-                HttpContext.Session.Remove("GioHnag");
+                HttpContext.Session.Remove("GioHang");
                 _notyfService.Success("Đơn hàng đặt thành công");
                 //cap nhat thong tin khach hang
                 return RedirectToAction("Success");
