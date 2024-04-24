@@ -1,36 +1,12 @@
 ﻿@model List<TblDonHang>
+@{ 
+}
 @if (Model != null && Model.Count() > 0)
 {
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
-            <tbody>
-                <tr class="text-center">
-                    <th>Mã đơn hàng</th>
-                    <th>Ngày mua hàng </th>
-                    <th>Họ và tên</th>
-                    <th>Trạng thái</th>
-                    <th>Tổng tiền</th>
-                </tr>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td><a class="account-order-id" href="javascript:void(0)" data-order-id="@item.IdDonHang">@item.IdDonHang</a></td>
-                        <td>@item.DNgayTao</td>
-                        <td>@item.IdKhachHangNavigation.STenKhachHang</td>
-                        <td>
-                            @if (item.IdTrangThai == 1)
-                            {
-                                @item.IdTrangThaiNavigation.STrangThai <a class="fa-red-river">Huỷ</a>
-                            }
-                            else
-                            {
-                                @item.IdTrangThaiNavigation.STrangThai
-                            }
+            <tbody id="ds__cart">
 
-                        </td>
-                        <td>@item.FTongTien.Value.ToString("#,##0") VNĐ</td>
-                    </tr>
-                }
             </tbody>
         </table>
     </div>
@@ -65,6 +41,11 @@ else
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+    $(document).ready(function () {
+        console.log("ready");
+        LoadDonHang();
+    });
     $(document).on('click', ".account-order-id", function () {
         var usid = $(this).data('order-id');
         $.ajax({
@@ -100,6 +81,60 @@ else
             }
         });
     });
+    $(document).on('click', ".huy-order-id", function () {
+        var pid = $(this).data('order-id');
+        if (confirm("Bạn thật sự muốn huỷ sản phẩm này?")) {
+            $.ajax({
+                url: '/Accounts/RemoveOrder',
+                type: 'post',
+                data: { id: pid },
+                success: function (data) {
+                    if (data.code == 200) {
+                        alert(data.msg);
+                        LoadDonHang();
+                        return;
+                    }
+                    if (data.code == 501) {
+                        alert(data.msg);
+                        return;
+                    }
+                    alert(data.msg);
+                }
+            });
+        }
+    });
+    function LoadDonHang() {
+        $.ajax({
+            url: '/Accounts/TrangDonHang',
+            Type: 'get',
+            success: function (data) {
+                //console.log(data)
+                if (data.code == 200) {
+                    $('#ds__cart').empty();
+                    console.log(data.tcn);
+                    let tr = `<tr class='text-center'>` +
+                        `<th>Mã đơn hàng</th>` +
+                        `<th>Ngày mua hàng</th>` +
+                        `<th>Họ và tên</th>` +
+                        `<th>Trạng thái</th>` +
+                        `<th>Tổng tiền</th>` +
+                        `<th colspan="2">Chức năng</th>` +
+                        `</tr>`;
+                    $.each(data.tcn, function (index, item) {
+                        tr += '<tr><td><a>' + item.maDon + '</a></td>';
+                        tr += '<td>' + item.ngayMua +'</td>';
+                        tr += '<td>' +item.hoTen+'</td>';
+                        tr += '<td>' + item.trangThai + '</td>';
+                        tr += '<td>' + item.tongTien + '</td>';
+                        tr += '<td><a class="account-order-id btn btn-primary btn-tone m-r-5" data-order-id="' + item.maDon + '"><i class="far fa-eye m-r-5 fa-lg text-white"></i><span class="text-white">Xem</span></a></td>';
+                        tr += '<td><a class="huy-order-id btn btn-danger btn-tone m-r-5" data-order-id="' + item.maDon + '"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a></td>';
+                        tr += '</tr>';
+                    });
+                    $('#ds__cart').append(tr);
+                }
+            }
+        });
+    }
 </script>
 
 

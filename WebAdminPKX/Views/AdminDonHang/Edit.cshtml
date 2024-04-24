@@ -70,6 +70,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="FTongTien" class="control-label">Tổng tiền: @(Model.FTongTien?.ToString("#,##0") ?? "N/A") VND</label>
+                                <input type="hidden" asp-for="FTongTien" class="form-control"/>
                             </div>
                         </div>
                         <br />
@@ -82,8 +83,10 @@
                                     <th>STT</th>
                                     <th>Mã sản phẩm</th>
                                     <th>Số lượng</th>
+                                    <th class="fw-bold text-success">Số lượng tồn kho</th>
                                     <th>Đơn giá</th>
                                     <th>Tổng tiền</th>
+                                    <th>Chức năng</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -97,10 +100,12 @@
                                             <th>@i</th>
                                             <td><a href="/AdminSanPham/Details/@item.IdSanPham">@item.IdSanPham</a></td>
                                             <td>@item.ISoLuong</td>
+                                            <td class="fw-bold text-success">@item.IdSanPhamNavigation.ISoLuongTonKho</td>
                                             <td>@item.FTongTien.ToString("#,##0") VND</td>
                                             <td>@((item.ISoLuong * item.FTongTien).ToString("#,##0")) VND</td>
-
+                                            <td><a class="btn__xoa btn btn-danger" data-id='@item.IdChiTietDonHang'><i class="fa fa-trash"></i>Huỷ</a></td>
                                         </tr>
+
                                         i++;
                                     }
                                 }
@@ -113,7 +118,7 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-info "><i class="far fa-save m-r-5 fa-lg"></i>Cập nhật</button>
+                    <button type="submit" class="btn btn-info "><i class="far fa-save m-r-5 fa-lg"></i>Duyệt</button>
                     <button class="btn btn-warning"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</button>
                 </div>
             </div>
@@ -122,5 +127,34 @@
 </div>
 <div>
 </div>
+
+@section Scripts{ 
+    <script>
+        $(".btn__xoa").on('click', function () {
+            var pid = $(this).data('id');
+            if (confirm("Bạn thật sự muốn huỷ sản phẩm này?")) {
+                console.log(pid);
+                $.ajax({
+                    url: '/AdminDonHang/RemoveOrder',
+                    type: 'post',
+                    data: { id: pid },
+                    success: function (data) {
+                        if (data.code == 200) {
+                            alert(data.msg);
+                            window.location.reload();
+                            return;
+                        }
+                        if (data.code == 501) {
+                            alert(data.msg);
+                            return;
+                        }
+                        alert(data.msg);
+                    }
+                });
+            }
+
+        });
+    </script>
+}
 
 

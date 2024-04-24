@@ -27,7 +27,7 @@ public partial class TblDonHang
 
     public string? SDiaChi { get; set; }
 
-    public DateTime? DNgayTao { get; set; }
+    public DateTime DNgayTao { get; set; }
 
     public virtual TblKhachHang? IdKhachHangNavigation { get; set; }
 
