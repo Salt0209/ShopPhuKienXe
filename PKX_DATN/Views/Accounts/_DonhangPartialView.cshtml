@@ -70,8 +70,8 @@ else
                         tr += '<td>' + (index + 1) + '</td>';
                         tr += '<td>' + item.tenSanPham + '</td>';
                         tr += '<td>' + item.iSoLuong + '</td>';
-                        tr += '<td>' + item.fTongTien + '</td>';
-                        tr += '<td>' + (item.iSoLuong * item.fTongTien) + '</td>';
+                        tr += '<td>' + Intl.NumberFormat('vi-VN').format(item.fTongTien) + ' VND</td>';
+                        tr += '<td>' + Intl.NumberFormat('vi-VN').format((item.iSoLuong * item.fTongTien)) + 'VND</td>';
                         tr += '</tr>';
                     });
                     $('#orderid').text("Mã đơn:" + usid);
@@ -125,7 +125,7 @@ else
                         tr += '<td>' + item.ngayMua +'</td>';
                         tr += '<td>' +item.hoTen+'</td>';
                         tr += '<td>' + item.trangThai + '</td>';
-                        tr += '<td>' + item.tongTien + '</td>';
+                        tr += '<td>' + Intl.NumberFormat('vi-VN').format(item.tongTien)+ ' VND</td>';
                         tr += '<td><a class="account-order-id btn btn-primary btn-tone m-r-5" data-order-id="' + item.maDon + '"><i class="far fa-eye m-r-5 fa-lg text-white"></i><span class="text-white">Xem</span></a></td>';
                         tr += '<td><a class="huy-order-id btn btn-danger btn-tone m-r-5" data-order-id="' + item.maDon + '"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a></td>';
                         tr += '</tr>';
