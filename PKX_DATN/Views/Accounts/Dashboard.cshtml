@@ -10,11 +10,7 @@
 <!-- Begin Main Content Area -->
 <main class="main-content">
     <br />
-    <div class="card">
-        <div class="card-body" style="background-color:#FAEAEA">
-        </div>
-    </div>
-    <div class="account-page-area section-space-y-axis-100 mt-5 mb-5">
+    <div class="account-page-area section-space-y-axis-100 mt-1 mb-1">
         <div class="container">
             <div class="card">
                 <div class="card-body" style="background-color:#FAEAEA">
@@ -40,23 +36,26 @@
                             <div class="tab-content myaccount-tab-content" id="account-page-tab-content">
                                 <div class="tab-pane fade show active" id="account-dashboard" role="tabpanel" aria-labelledby="account-dashboard-tab">
                                     <div class="myaccount-dashboard">
+
                                         <h4 class="small-title text-center">Thông tin cơ bản</h4>
+                                        <button id="enableInputBtn" class="ml-2"><i class="fa fa-edit"></i>Chỉnh sửa</button>
                                         <hr />
                                         <p>
-                                            <b>Xin chào,</b> <b>@Model.STenKhachHang.</b>
+                                            <b>Tên tài khoản:</b> <input type="text" id="ten" required disabled value="@Model.STenKhachHang" />
                                         </p>
                                         <br />
                                         <p>
-                                            <b>Email:</b> @Model.SEmail.
+                                            <b>Email:</b> <input type="text" id="email" required disabled value="@Model.SEmail" />
                                         </p>
                                         <br />
                                         <p>
-                                            <b>Số điện thoại:</b> @Model.SSdt.
+                                            <b>Số điện thoại:</b> <input type="text" id="sdt" required disabled value="@Model.SSdt" />
                                         </p>
                                         <br />
                                         <p>
-                                            <b>Đại chỉ</b>: @Model.SDiaChi.
+                                            <b>Địa chỉ</b>: <input type="text" id="diachi" required disabled value="@Model.SDiaChi" />
                                         </p>
+                                        <button id="saveInfo" disabled>Lưu</button>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="account-orders" role="tabpanel" aria-labelledby="account-orders-tab">
@@ -99,6 +98,7 @@
     <br />
 </main>
 <!-- Main Content Area End Here -->
+
 @section Scripts{
     <script>
         $(document).ready(function () {
@@ -119,6 +119,59 @@
                     }
                 });
             });
+        });
+        $('#enableInputBtn').on('click', function () {
+            $("#ten").removeAttr('disabled');
+            $("#email").removeAttr('disabled');
+            $("#sdt").removeAttr('disabled');
+            $("#diachi").removeAttr('disabled');
+            $("#saveInfo").removeAttr('disabled');
+        });
+        $("#saveInfo").on('click', function () {
+            var ten = $('#ten').val().trim();
+            var email = $('#email').val().trim();
+            var sdt = $('#sdt').val().trim();
+            var diachi = $('#diachi').val().trim();
+
+            if (ten.length == 0 || email.length == 0 || sdt.length == 0 || diachi.length == 0) {
+                alert("vui lòng nhập đủ dữ liệu");
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('ten', ten);
+            formData.append('email', email);
+            formData.append('sdt', sdt);
+            formData.append('diachi', diachi);
+
+            /*for (var pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }*/
+            $.ajax({
+                url: '/Accounts/SaveInfo',
+                type: 'post',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.code == 300) {
+                        alert(data.msg);
+                        window.location.href = '/Accounts/Dashboard';
+                        return;
+                    }
+                    if (data.code == 200) {
+                        alert(data.msg);
+                        $("#saveInfo").attr("disabled", true);
+                        return;
+                    }
+                    if (data.code == 500 || data.code == 501) {
+                        alert(data.msg);
+                        return;
+                    }
+                    alert("Lỗi không xác định");
+                }
+            });
+
         });
     </script>
 }
