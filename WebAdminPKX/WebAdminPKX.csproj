@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\images\about\**" />
+    <Compile Remove="wwwroot\images\news\**" />
+    <Content Remove="wwwroot\images\about\**" />
+    <Content Remove="wwwroot\images\news\**" />
+    <EmbeddedResource Remove="wwwroot\images\about\**" />
+    <EmbeddedResource Remove="wwwroot\images\news\**" />
+    <None Remove="wwwroot\images\about\**" />
+    <None Remove="wwwroot\images\news\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.4" />
@@ -19,6 +30,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="PagedList.Core.Mvc" Version="3.0.0" />
+    <PackageReference Include="Polybioz.HtmlRenderer.PdfSharp.Core" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,7 +63,6 @@
 
   <ItemGroup>
     <None Include="Views\AdminLogin\AdminLogin.cshtml" />
-    <None Include="Views\AdminDonHang\_OrderListPartial.cshtml" />
     <None Include="wwwroot\assets\css\style.css.map" />
     <None Include="wwwroot\assets\fonts\ElegantIcons.svg" />
     <None Include="wwwroot\assets\fonts\fontawesome-webfont.svg" />
@@ -260,8 +271,6 @@
     <Folder Include="wwwroot\assets\img\product\" />
     <Folder Include="wwwroot\assets\img\shop-details\" />
     <Folder Include="wwwroot\assets\img\shopping-cart\" />
-    <Folder Include="wwwroot\images\about\" />
-    <Folder Include="wwwroot\images\news\" />
   </ItemGroup>
 
   <ItemGroup>
