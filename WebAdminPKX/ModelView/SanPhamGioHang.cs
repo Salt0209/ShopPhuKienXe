@@ -1,6 +1,6 @@
 ﻿using Domain.Models;
 
-namespace PKX_DATN.ModelViews
+namespace WebAdminPKX.ModelView
 {
     public class SanPhamGioHang
     {

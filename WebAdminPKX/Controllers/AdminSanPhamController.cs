@@ -27,6 +27,20 @@ namespace WebAdminPKX.Controllers
             return View(await webPkxContext.ToListAsync());
         }
         [HttpGet]
+        public JsonResult SanPham()
+        {
+            try
+            {
+                var dssp = _context.TblSanPhams.ToList();
+
+                return Json(new { code = 200, dssp = dssp, msg = "Lấy dữ liệu thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lấy dữ liệu thất bại:" + ex.Message });
+            }
+        }
+        [HttpGet]
         public IActionResult LoadProductByStatus(int status)
         {
             // Lấy danh sách đơn hàng dựa trên idTrangThai

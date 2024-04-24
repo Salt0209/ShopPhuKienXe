@@ -10,6 +10,12 @@ using PagedList.Core;
 using Domain.Models;
 using static NuGet.Packaging.PackagingConstants;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using WebAdminPKX.ModelView;
+using Microsoft.AspNetCore.Http;
+using WebAdminPKX.Extension;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Notyf;
+using Domain.Helpers;
 
 namespace WebAdminPKX.Controllers
 {
@@ -17,10 +23,24 @@ namespace WebAdminPKX.Controllers
     public class AdminDonHangController : Controller
     {
         private readonly WebPkxContext _context;
+        public INotyfService _notyfService { get; }
 
-        public AdminDonHangController(WebPkxContext context)
+        public AdminDonHangController(WebPkxContext context, INotyfService notyfService)
         {
             _context = context;
+            _notyfService = notyfService;
+        }
+        public List<SanPhamGioHang> GioHang
+        {
+            get
+            {
+                var gh = HttpContext.Session.Get<List<SanPhamGioHang>>("GioHang");
+                if (gh == default(List<SanPhamGioHang>))
+                {
+                    gh = new List<SanPhamGioHang>();
+                }
+                return gh;
+            }
         }
 
         // GET: AdminDonHang
@@ -78,7 +98,6 @@ namespace WebAdminPKX.Controllers
                 return NotFound();
             }
             var ChiTietDonHang = _context.TblChiTietDonHangs
-
                 .AsNoTracking().Where(x => x.IdDonHang == tblDonHang.IdDonHang).OrderBy(x => x.IdChiTietDonHang).ToList();
             ViewBag.ChiTiet = ChiTietDonHang;
 
@@ -86,32 +105,147 @@ namespace WebAdminPKX.Controllers
         }
 
         // GET: AdminDonHang/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
-            ViewData["IdKhachHang"] = new SelectList(_context.TblKhachHangs, "IdKhachHang", "IdKhachHang");
-            ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "STrangThai");
-            return View();
+            var ttKH = _context.TblKhachHangs
+                .FirstOrDefault(i=>i.IdKhachHang == id);
+            ViewBag.KhachHang = ttKH;
+
+            var chitietdh = _context.TblChiTietDonHangs
+                .Include(i=>i.IdSanPhamNavigation)
+                .AsNoTracking().Where(i=>i.IdDonHang == 1).ToList();
+            ViewBag.ChiTiet = chitietdh;
+
+            var don=_context.TblDonHangs.FirstOrDefault(i=>i.IdDonHang==1);
+            return View(ttKH);
         }
 
-        // POST: AdminDonHang/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdDonHang,IdKhachHang,IdTrangThai,SGhiChu,FPhiVanChuyen,FTongTien,SDiaChi,IdSanPham,DNgayTao")] TblDonHang tblDonHang)
+        public async Task<IActionResult> CreateOrder(int IdKhachHang)
         {
-            if (ModelState.IsValid)
+            //lay gio hang ra de xu ly
+            var giohang = HttpContext.Session.Get<List<SanPhamGioHang>>("GioHang");
+
+            try
             {
-                _context.Add(tblDonHang);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //khoi tao don hang
+                TblDonHang donhang = new TblDonHang();
+                donhang.IdKhachHang = IdKhachHang;
+                donhang.DNgayTao = DateTime.Now;
+                donhang.IdTrangThai = 3; //don hang giao thành công          
+                donhang.FTongTien = Convert.ToInt32(giohang.Sum(x => x.TotalMoney));
+                _context.Add(donhang);
+                _context.SaveChanges();
+
+                //Tao danh sach don hang
+                foreach (var item in giohang)
+                {
+                    TblChiTietDonHang orderDetail = new TblChiTietDonHang();
+                    orderDetail.IdDonHang = donhang.IdDonHang;
+                    orderDetail.IdSanPham = item.SanPham.IdSanPham;
+                    orderDetail.ISoLuong = item.amount;
+                    var gia = _context.TblSanPhams.AsNoTracking()
+                        .FirstOrDefault(x=>x.IdSanPham==orderDetail.IdSanPham)
+                        .FGiaTien.GetValueOrDefault(0);
+                    orderDetail.FTongTien = item.amount * gia;
+                    _context.Add(orderDetail);
+                }
+                _context.SaveChanges();
+                //Clear cart
+                HttpContext.Session.Remove("GioHang");
+                _notyfService.Success("Đơn hàng đặt thành công");
+                //cap nhat thong tin khach hang
+                return RedirectToAction("Index","AdminDonHang");
             }
-            ViewData["IdKhachHang"] = new SelectList(_context.TblKhachHangs, "IdKhachHang", "IdKhachHang", tblDonHang.IdKhachHang);
-            ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "IdTrangThai", tblDonHang.IdTrangThai);
-            return View(tblDonHang);
+            catch
+            {
+                ViewBag.GioHang = giohang;
+                var kh = _context.TblKhachHangs
+                .FirstOrDefault(i => i.IdKhachHang == IdKhachHang);
+                return View(kh);
+            }
         }
 
-        // GET: AdminDonHang/Edit/5
+        [HttpGet]
+        public JsonResult DSCart()
+        {
+            try
+            {
+                var dsc = GioHang;
+
+                return Json(new { code = 200, dsc = dsc, msg = "Lấy dữ liệu thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lấy dữ liệu thất bại:" + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddToCart(int productID, int? amount)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Người dùng đã đăng nhập
+                return Json(new { success = false, message = "Bạn chưa đăng nhập" }); ;
+            }
+            List<SanPhamGioHang> gioHang = GioHang;
+            try
+            {
+                //them sp vao gio hang
+                SanPhamGioHang item = GioHang.SingleOrDefault(p => p.SanPham.IdSanPham == productID);
+                if (item != null)//da co --> capnhat so luong
+                {
+                    _notyfService.Information("Sản phẩm đã có ở danh sách");
+                    return Json(new { success = true });
+
+                }
+                else
+                {
+                    TblSanPham hh = _context.TblSanPhams.SingleOrDefault(p => p.IdSanPham == productID);
+                    item = new SanPhamGioHang
+                    {
+                        amount = amount.HasValue ? amount.Value : 1,
+                        SanPham = hh
+                    };
+                    gioHang.Add(item);//them vao gio
+
+                }
+                //luu lai Session
+                HttpContext.Session.Set<List<SanPhamGioHang>>("GioHang", gioHang);
+                _notyfService.Success("Thêm sản phẩm thành công");
+                int cartItemCount = gioHang.Count();
+                return Json(new { success = true, itemCount = cartItemCount });
+            }
+            catch
+            {
+                return Json(new { success = false, msg = "Lỗi thực hiện thêm vào session" });
+            }
+        }
+        [HttpPost]
+        public ActionResult RemoveFromCart(int productID)
+        {
+            try
+            {
+                var cart = HttpContext.Session.Get<List<SanPhamGioHang>>("GioHang") ?? new List<SanPhamGioHang>();
+
+                var itemToUpdate = cart.SingleOrDefault(item => item.SanPham.IdSanPham == productID);
+                if (itemToUpdate != null)
+                {
+                    cart.Remove(itemToUpdate);
+                }
+                // luu lai session
+                HttpContext.Session.Set<List<SanPhamGioHang>>("GioHang", cart);
+                return Json(new { success = true ,msg="Xoá thành công"});
+            }
+            catch
+            {
+                return Json(new { success = false ,msg="Xoá thất bai"});
+            }
+        }
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

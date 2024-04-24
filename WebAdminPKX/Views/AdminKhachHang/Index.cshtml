@@ -4,13 +4,24 @@
     ViewData["Title"] = "Index";
 }
 
-<p class="mb-3">
-    <a class="btn btn-primary" asp-action="Create">Tạo mới</a>
-</p>
-<div class="container">
+<div class="row">
+    <div class="col-md-6">
+        <div class="input-group rounded">
+            <h4 class="m-3">Tìm kiếm</h4>
+            <input type="text" id="searchInput" class="form-control rounded" placeholder="Nhập vào số điện thoại..." aria-label="Search" aria-describedby="search-addon" />
+            <span class="input-group-text border-0" id="search-addon">
+                <i class="fas fa-search"></i>
+            </span>
+        </div>
+    </div>
+    <div class="col-md-4" style="margin-left: 10rem;"><a class="btn btn-primary" asp-action="Create">Tạo mới</a> </div>
+</div>
+
+        
+<div class="container mt-4">
     <div class="row">
         <div class="col-12">
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="records_table">
                 <thead>
                     <tr>
                         <th scope="col">@Html.DisplayNameFor(model => model.STenKhachHang)</th>
@@ -35,8 +46,15 @@
                                 <a class="btn btn-success" href="@Url.Action("Edit", "AdminKhachHang",new {id=item.IdKhachHang})">
                                     <i class="far fa-edit"></i>
                                 </a>
-                                <a class="btn btn-danger" href="@Url.Action("Delete", "AdminKhachHang",new {id=item.IdKhachHang})">
-                                    <i class="far fa-trash-alt"></i>
+                                @if(User.IsInRole("SuperAdmin"))
+                                {
+                                    <a class="btn btn-danger" href="@Url.Action("Delete", "AdminKhachHang",new {id=item.IdKhachHang})">
+                                        <i class="far fa-trash-alt"></i>
+                                    </a>
+                                }
+
+                                <a class="btn btn-info" href="@Url.Action("Create", "AdminDonHang",new {id=item.IdKhachHang})">
+                                    <i class="fas fa-plus"></i>
                                 </a>
                             </td>
                         </tr>
@@ -46,3 +64,29 @@
         </div>
     </div>
 </div>
+
+@section Scripts{ 
+    <script>
+        document.getElementById("searchInput").addEventListener("input", function () {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value;
+            table = document.getElementById("records_table");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                console.log(filter);
+
+                td = tr[i].getElementsByTagName("td")[2]; // Chỉ tìm kiếm trong cột thứ hai (tên sản phẩm)
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        });
+    </script>
+}

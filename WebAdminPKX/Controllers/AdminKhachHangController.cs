@@ -40,6 +40,9 @@ namespace WebAdminPKX.Controllers
             {
                 return NotFound();
             }
+            var tongTienDaMua = _context.TblDonHangs.Where(x => x.IdKhachHang == id)
+                .Sum(x => x.FTongTien).GetValueOrDefault();
+            ViewBag.TongTienDaMua = tongTienDaMua;
 
             return View(tblKhachHang);
         }

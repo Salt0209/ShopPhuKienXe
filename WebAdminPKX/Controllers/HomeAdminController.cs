@@ -7,12 +7,12 @@ using System;
 
 namespace WebAdminPKX.Controllers
 {
-    public class HomeController : Controller
+    public class HomeAdminController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeAdminController> _logger;
 
         private readonly WebPkxContext _context;
-        public HomeController(WebPkxContext context, ILogger<HomeController> logger)
+        public HomeAdminController(WebPkxContext context, ILogger<HomeAdminController> logger)
         {
             _logger = logger;
             _context = context;
