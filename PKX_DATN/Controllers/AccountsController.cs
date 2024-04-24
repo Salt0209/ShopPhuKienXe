@@ -67,7 +67,7 @@ namespace PKX_DATN.Controllers
         }
         [AllowAnonymous]
         public IActionResult Dashboard()
-        { 
+        {
             //var cart = HttpContext.Session.Get<List<CartItem>>("GioHang");
             var AccountID = HttpContext.Session.GetString("CustomerId");
             if (AccountID != null)
@@ -80,13 +80,51 @@ namespace PKX_DATN.Controllers
                         .Include(x => x.IdKhachHangNavigation)
                         .AsNoTracking()
                         .Where(x => x.IdKhachHang == khachhang.IdKhachHang)
-                        .OrderByDescending(x => x.DNgayTao).ToList();
+                        .OrderBy(x => x.IdTrangThai).ToList();
                     ViewBag.DonHang = lsDonHang;
                     return View(khachhang);
                 }
             }
             //ViewBag.GioHang = cart;
             return RedirectToAction("Login");
+        }
+        [HttpPost]
+        public JsonResult SaveInfo(string ten, string email, string sdt, string diachi)
+        {
+            try
+            {
+                var AccountID = HttpContext.Session.GetString("CustomerId");
+                if (AccountID == null)
+                {
+
+                    return Json(new { code = 300, msg = "Hết phiên đăng nhập. Vui lòng đăng nhập lại" }); ;
+
+                }
+                var nguoidung = _context.TblKhachHangs.Where(b => b.IdKhachHang == Int32.Parse(AccountID)).FirstOrDefault();
+                if (nguoidung != null)
+                {
+                    nguoidung.STenKhachHang = ten;
+                    nguoidung.SEmail = email;
+                    nguoidung.SSdt = sdt;
+                    nguoidung.SDiaChi = diachi;
+
+                    _context.TblKhachHangs.Update(nguoidung);
+                    _context.SaveChanges();
+                    return Json(new { code = 200, msg = "cập nhật thành công" });
+                }
+                else
+                {
+                    return Json(new { code = 500, msg = "Không tìm thấy người dùng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    code = 501,
+                    msg = "Thêm thất bại:" + ex.Message
+                });
+            }
         }
         [HttpGet]
         [AllowAnonymous]
