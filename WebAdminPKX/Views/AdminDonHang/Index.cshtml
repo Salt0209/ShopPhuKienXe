@@ -6,6 +6,13 @@
     int CurrentPage = ViewBag.CurrentPage;
     ViewData["Title"] = "Index";
     List<TblTrangThaiDonHang> trangthais = ViewBag.TrangThai;
+
+    string headerRow = "<tr>\r\n\r\n    <th>STT</th>\r\n    <th>Mã đơn hàng</th>\r\n    <th>Tên khách hàng</th>\r\n    <th>Ngày mua</th>\r\n    <th>Tổng tiền</th>\r\n    <th>Trạng thái</th>\r\n    <th colspan=\"5\">Chức năng</th>\r\n</tr>";
+    string DetailsUrl = Url.Action("Details", "AdminDonHang");
+    string CapNhatTrangThaiUrl = Url.Action("CapNhatTrangThai", "AdminDonHang");
+    string EditUrl = Url.Action("Edit", "AdminDonHang");
+    string PrintUrl = Url.Action("Print", "AdminDonHang");
+    string DeleteUrl = Url.Action("Delete", "AdminDonHang");
 }
 
 <div class="page-header">
@@ -34,105 +41,15 @@
                         }
 
                     </select>
-            </div>
+                </div>
             </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover e-commerce-table">
+            <table class="table table-hover e-commerce-table mt-2">
                 <thead>
-                    <tr>
-
-                        <th>STT</th>
-                        <th>Mã đơn hàng</th>
-                        <th>Tên khách hàng</th>
-                        <th>Ngày mua</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Chức năng</th>
-                    </tr>
+                    @Html.Raw(headerRow)
                 </thead>
                 <tbody id="productList">
-                    @if (Model != null)
-                    {
-                        foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>
-                                    @index
-                                </td>
-                                <td>
-                                    @item.IdDonHang
-                                </td>
-                                <td>
-                                    @item.IdKhachHangNavigation.STenKhachHang
-
-                                </td>
-                                <td>
-                                    @item.DNgayTao
-
-                                </td>
-                                <td>
-                                    @item.FTongTien.Value.ToString("#,##0") VNĐ
-
-                                </td>
-                                <td>
-                                    @switch (item.IdTrangThai)
-                                    {
-                                        case 1:
-                                            <div class="badge badge-info badge-dot m-r-10"></div>
-                                            break;
-                                        case 2:
-                                            <div class="badge badge-warning badge-dot m-r-10"></div>
-                                            break;
-                                        case 3:
-                                            <div class="badge badge-primary badge-dot m-r-10"></div>
-                                            break;
-                                        case 4:
-                                            <div class="badge badge-success badge-dot m-r-10"></div>
-                                            break;
-                                        case 5:
-                                            <div class="badge badge-dark badge-dot m-r-10"></div>
-                                            break;
-                                        case 6:
-                                            <div class="badge badge-danger badge-dot m-r-10"></div>
-
-                                            break;
-                                    }
-                                    <p>@item.IdTrangThaiNavigation.STrangThai</p>
-                                </td>
-                                <td>
-                                    <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Details" asp-route-id="@item.IdDonHang"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a>
-                                </td>
-                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
-                                {
-                                    <td>
-                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="CapNhatTrangThai" asp-route-id="@item.IdDonHang"><i class="fas fa-sync m-r-5 fa-lg"></i>Đã hoàn thành</a>
-                                    </td>
-                                }
-                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng"))
-                                {
-                                    <td>
-                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Edit" asp-route-id="@item.IdDonHang"><i class="far fa-edit m-r-5 fa-lg"></i>Duyệt</a>
-                                    </td>
-                                }
-                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
-                                {
-                                    <td>
-                                        <a class="btn btn-success btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Delete" asp-route-id="@item.IdDonHang"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a>
-                                    </td>
-                                }
-                                @if (item.IdTrangThaiNavigation.STrangThai.Equals("Đã giao thành công") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
-                                {
-                                    <td>
-                                        <a class="btn btn-primary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Print" asp-route-id="@item.IdDonHang"><i class="fas fa-print m-r-5 fa-lg"></i>In hoá đơn</a>
-                                </td>
-                                }
-                            </tr>
-                            index += 1;
-                        }
-                    }
-
-
                 </tbody>
             </table>
             <div aria-label="Page navigation example">
@@ -144,31 +61,123 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
     // JavaScript logic ở đây (nếu cần)
     $(document).ready(function () {
-        $('#selectList').change(function () {
-            var selectedValue = $(this).val();
-            console.log(selectedValue)// Lấy giá trị được chọn trong select option
-            if (selectedValue !== null) { // Kiểm tra xem giá trị đã chọn có khác null không
-                // Gửi yêu cầu AJAX để tải lại sản phẩm dựa trên idTrangThai
-                $.ajax({
-                    url: '/AdminDonHang/LoadProductByStatus', // Đường dẫn của action method để xử lý yêu cầu AJAX
-                    type: 'GET',
-                    data: { idTrangThai: selectedValue }, // Dữ liệu được gửi đi, trong trường hợp này là idTrangThai
-                    success: function (result) {
-                        // Xử lý kết quả trả về từ server nếu cần
-                        // Ví dụ: cập nhật HTML của sản phẩm
-                        $('#productList').html(result);
-                    },
-                    error: function (xhr, status, error) {
-                        // Xử lý lỗi nếu có
-                        console.error(xhr.responseText);
+        console.log('ready');
+        LoadDonHang(1);
+    });
+    $('#selectList').change(function () {
+        var selectedValue = $(this).val();
+        if (selectedValue > 0) { // Kiểm tra xem giá trị đã chọn có khác null không
+            LoadDonHang(0);
+        }
+        else {
+            LoadDonHang(1);
+        }
+    });
+    $(document).on('click', ".btn__hoanthanh", function () {
+        var pid = $(this).data('id');
+        if (confirm("Đơn hàng đã được hoàn thành?")) {
+            $.ajax({
+                url: '/AdminDonHang/ChangeStatus',
+                type: 'post',
+                data: { oldStatus: pid, newStatus: 3 },
+                success: function (data) {
+                    if (data.code == 200) {
+                        alert(data.msg);
+                        LoadDonHang(1);
+                        return;
                     }
-                });
+                    if (data.code == 501) {
+                        alert(data.msg);
+                        return;
+                    }
+                    alert(data.msg);
+                }
+            });
+        }
+    });
+    function LoadDonHang(dataType) {
+        var url = '';
+        var requestData = null;
+        var isSuperAdmin = @User.IsInRole("SuperAdmin").ToString().ToLower();
+        if (dataType == '0') {
+            var selectedValue = $('#selectList').val();
+            url = '/AdminDonHang/LoadProductByStatus';
+            requestData = { idTrangThai: selectedValue };
+        } else if (dataType == '1') {
+            // Chỉnh sửa URL nếu cần
+            url = '/AdminDonHang/TrangDonHang';
+        }
+        $.ajax({
+            url: url,
+            Type: 'get',
+            data: requestData,
+            success: function (data) {
+                if (data.code == 200) {
+                    $('#productList').empty();
+                    console.log(data.tcn);
+                    let tr = '';
+                    $.each(data.tcn, function (index, item) {
+                        tr += '<tr><td>' + (index + 1) + '</td>';
+                        tr += '<td><a>' + item.maDon + '</a></td>';
+                        tr += '<td>' + item.hoTen + '</td>';
+                        tr += '<td>' + item.ngayMua + '</td>';
+                        tr += '<td>' + Intl.NumberFormat('vi-VN').format(item.tongTien) + '</td>';
+                        tr += '<td>';
+
+                        switch (item.idTrangThai) {
+                            case 1:
+                                tr += '<div class="badge badge-warning badge-dot m-r-10"></div>';
+                                break;
+                            case 2:
+                                tr += '<div class="badge badge-primary badge-dot m-r-10"></div>';
+                                break;
+                            case 3:
+                                tr += '<div class="badge badge-success badge-dot m-r-10"></div>';
+                                break;
+                            case 4:
+                                tr += '<div class="badge badge-dark badge-dot m-r-10"></div>';
+                                break;
+                            case 5:
+                                tr += '<div class="badge badge-danger badge-dot m-r-10"></div>';
+                                break;
+                            case 6: tr += '<div class="badge badge-info badge-dot m-r-10"></div>';
+                                break;
+                        }
+                        tr += '<p>' + item.trangThai + '</p>';
+                        tr += '</td>'
+                        if (isSuperAdmin) {
+                            tr += '<td><a class="btn btn-secondary btn-tone m-r-5" href="@CapNhatTrangThaiUrl?id='+item.maDon+'"><i class="fas fa-sync m-r-5 fa-lg"></i>Cập nhật trạng thái</a></td>';
+                        }
+                        tr += '<td><a class="btn btn-primary btn-tone m-r-5" href="@DetailsUrl?id=' + item.maDon + '"><i class="far fa-eye m-r-5 fa-lg"></i>Xem</a></td>';
+
+                        switch (item.idTrangThai) {
+                            case 1: tr += '<td><a class="btn btn-secondary btn-tone m-r-5" href="@EditUrl?id=' + item.maDon + '"><i class="far fa-edit m-r-5 fa-lg"></i>Duyệt</a></td>';
+                                tr += '<td><a class="btn btn-success btn-tone m-r-5" href="@DeleteUrl?id=' + item.maDon + '"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a></td>';
+                                break;
+                            case 2:
+                                tr += '<td><a class="btn__hoanthanh btn btn-secondary btn-tone m-r-5" data-id="' + item.maDon + '"><i class="fa fa-check m-r-5 fa-lg"></i>Đã hoàn thành</a></td>';
+                                tr += '<td><a class="btn btn-success btn-tone m-r-5" href="@DeleteUrl?id=' + item.maDon + '"><i class="far fa-trash-alt m-r-5 fa-lg"></i>Huỷ</a></td>';
+                                tr += '<td><a class="btn btn-primary btn-tone m-r-5" href="@PrintUrl?id=' + item.maDon + '"><i class="fas fa-print m-r-5 fa-lg"></i>In hoá đơn</a></td>';
+                                break;
+                            case 3:
+                                tr += '<div class="badge badge-primary badge-dot m-r-10"></div>';
+                                tr += '<td><a class="btn btn-primary btn-tone m-r-5" href="@PrintUrl?id="' + item.maDon + '"><i class="fas fa-print m-r-5 fa-lg"></i>In hoá đơn</a></td>';
+                                break;
+                        }
+
+                        tr += '</tr>';
+                    });
+                    $('#productList').append(tr);
+                }
             }
         });
-    });
-</script>
+    }
+    </script>
+}

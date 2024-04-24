@@ -19,7 +19,7 @@
 
 <div class="row">
     <div class="modal-body">
-        <form asp-action="Edit">
+        <form asp-action="Edit" asp-route-id="@Model.IdDonHang">
             <div class="card">
                 <div class="card-body" style="background-color:#FAEAEA">
                     <div class="row">
@@ -36,12 +36,6 @@
                                 <label asp-for="DNgayTao" class="control-label">Ngày mua</label>
                                 <input asp-for="DNgayTao" class="form-control" />
                                 <span asp-validation-for="DNgayTao" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="IdTrangThai" class="control-label">Trạng thái đơn hàng</label>
-                                <select asp-for="IdTrangThai" class="form-control" asp-items="@((SelectList)ViewData["IdTrangThai"])"></select>
                             </div>
                         </div>
 

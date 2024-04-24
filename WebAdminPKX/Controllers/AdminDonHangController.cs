@@ -62,23 +62,53 @@ namespace WebAdminPKX.Controllers
             return View(models);
         }
         [HttpGet]
-        public IActionResult LoadProductByStatus(int idTrangThai)
+        public JsonResult LoadProductByStatus(int idTrangThai)
         {
-
-            // Lấy danh sách đơn hàng dựa trên idTrangThai
-            var donHangs = _context.TblDonHangs
-                .Include(t => t.IdKhachHangNavigation)
-                .Include(t => t.IdTrangThaiNavigation)
-                .OrderBy(t=>t.IdTrangThai)
-                .AsNoTracking();
-            if(idTrangThai != 0)
+            try
             {
-                donHangs = donHangs.Where(t => t.IdTrangThai == idTrangThai)
-                    .OrderByDescending(t=>t.DNgayTao);
+                var tcn = _context.TblDonHangs
+                .Where(t => t.IdTrangThai==idTrangThai)
+                .OrderByDescending(t => t.DNgayTao)
+                .Select(t => new
+                {
+                    maDon = t.IdDonHang,
+                    ngayMua = t.DNgayTao.ToString("dd/MM/yyyy"),
+                    hoTen = t.IdKhachHangNavigation.STenKhachHang,
+                    idTrangThai = t.IdTrangThai,
+                    trangThai = t.IdTrangThaiNavigation.STrangThai,
+                    tongTien = t.FTongTien,
+                })
+                .AsNoTracking().ToList();
+                return Json(new { code = 200, tcn = tcn, msg = "thành công" });
             }
-
-            // Trả về một phần tử HTML hoặc một PartialView chứa danh sách đơn hàng
-            return PartialView("_OrderListPartial", donHangs.ToList());
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "thất bại. error: " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public JsonResult TrangDonHang()
+        {
+            try
+            {
+                var tcn = _context.TblDonHangs
+                .OrderBy(t => t.IdTrangThai)
+                .Select(t => new
+                {
+                    maDon = t.IdDonHang,
+                    ngayMua = t.DNgayTao.ToString("dd/MM/yyyy"),
+                    hoTen = t.IdKhachHangNavigation.STenKhachHang,
+                    idTrangThai = t.IdTrangThai,
+                    trangThai = t.IdTrangThaiNavigation.STrangThai,
+                    tongTien = t.FTongTien,
+                })
+                .AsNoTracking().ToList();
+                return Json(new { code = 200, tcn = tcn, msg = "thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "thất bại. error: " + ex.Message });
+            }
         }
 
         // GET: AdminDonHang/Details/5
@@ -188,6 +218,25 @@ namespace WebAdminPKX.Controllers
             catch (Exception ex)
             {
                 return Json(new { code = 501, msg = "Xóa thất bại " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public JsonResult ChangeStatus(int oldStatus,int newStatus)
+        {
+            try
+            {
+                var order = _context.TblDonHangs.Find(oldStatus);
+
+                order.IdTrangThai = newStatus;
+                _context.Update(order);
+                _context.SaveChanges();
+
+                return Json(new { code = 200, msg = "Cập nhật thành công"});
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 501, msg = "Cập nhật thất bại " + ex.Message });
             }
         }
 
@@ -306,6 +355,25 @@ namespace WebAdminPKX.Controllers
             {
                 try
                 {
+                    tblDonHang.IdTrangThai = 2;
+
+                    var ctdon = _context.TblChiTietDonHangs
+                        .Where(x => x.IdDonHang==id)
+                        .AsNoTracking().ToList();
+                    foreach(var item in  ctdon)
+                    {
+                        var updateItem = _context.TblSanPhams.Find(item.IdSanPham);
+                        updateItem.ISoLuongTonKho -=  item.ISoLuong;
+
+                        if (updateItem.ISoLuongTonKho< 0){
+                            _notyfService.Error("Có sản phẩm kho không đủ số lượng để giao!");
+                            ViewData["IdKhachHang"] = new SelectList(_context.Account, "IdKhachHang", "IdKhachHang", tblDonHang.IdKhachHang);
+                            ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "IdTrangThai", tblDonHang.IdTrangThai);
+                            return View(tblDonHang);
+                        }
+                        _context.TblSanPhams.Update(updateItem);
+                    }
+
                     _context.Update(tblDonHang);
                     await _context.SaveChangesAsync();
                 }
@@ -365,6 +433,7 @@ namespace WebAdminPKX.Controllers
                     }
                     _context.Update(donhang);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -399,11 +468,10 @@ namespace WebAdminPKX.Controllers
             {
                 return NotFound();
             }
-            var check = _context.TblChiTietDonHangs
-                .AsNoTracking().FirstOrDefault(i => i.IdDonHang == id);
-            if (check != null)
+            var check = tblDonHang.IdTrangThai;
+            if (check !=1 && check != 2)
             {
-                _notyfService.Error("Đơn hàng có chứa sản phẩm ở trong!");
+                _notyfService.Error("Chỉ có thể huỷ đơn chưa xác nhận hoặc đang giao!");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -418,7 +486,8 @@ namespace WebAdminPKX.Controllers
             var tblDonHang = await _context.TblDonHangs.FindAsync(id);
             if (tblDonHang != null)
             {
-                _context.TblDonHangs.Remove(tblDonHang);
+                tblDonHang.IdTrangThai = 4;
+                _context.TblDonHangs.Update(tblDonHang);
             }
 
             await _context.SaveChangesAsync();
