@@ -3,17 +3,20 @@
 @{
     ViewData["Title"] = "Details";
     List<TblChiTietDonHang> orderDetails = ViewBag.ChiTiet;
-    var tong=0;
+    var tong = 0;
 }
 
 <!-- Content Wrapper START -->
+<div class="text-right">
+    <a class="btn btn-info " asp-action="Print" asp-route-id="@Model.IdDonHang"><i class="fas fa-print m-r-5 fa-lg"></i>In</a>
+</div>
 <div class="main-content">
     <div class="page-header">
         <h2 class="header-title">Chi tiết đơn hàng</h2>
         <div class="header-sub-title">
             <nav class="breadcrumb breadcrumb-dash">
-                <a  asp-controller="AdminDonHang" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
-                <a class="breadcrumb-item"  asp-controller="AdminDonHang" asp-action="Index">Danh sách đơn hàng</a>
+                <a asp-controller="AdminDonHang" asp-action="Index" class="breadcrumb-item"><i class="anticon anticon-home m-r-5"></i>Home</a>
+                <a class="breadcrumb-item" asp-controller="AdminDonHang" asp-action="Index">Danh sách đơn hàng</a>
 
             </nav>
         </div>
@@ -64,7 +67,7 @@
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Mã sản phẩm</th>
+                                        <th>Sản phẩm</th>
                                         <th>Số lượng</th>
                                         <th>Đơn giá</th>
                                         <th>Tổng tiền</th>
@@ -79,13 +82,13 @@
                                             string url = "/";
                                             <tr>
                                                 <th>@i</th>
-                                                <td><a href="/AdminSanPham/Details/@item.IdSanPham">@item.IdSanPham</a></td>
+                                                <td><a href="/AdminSanPham/Details/@item.IdSanPham">@item.IdSanPhamNavigation.STenSanPham</a></td>
                                                 <td>@item.ISoLuong</td>
                                                 <td>@item.FTongTien.ToString("#,##0") VND</td>
                                                 <td>@(item.ISoLuong * item.FTongTien)VND</td>
 
                                             </tr>
-                                            tong+=item.ISoLuong * item.FTongTien;
+                                            tong += item.ISoLuong * item.FTongTien;
                                             i++;
                                         }
                                     }
@@ -137,6 +140,8 @@
         <div class="text-right">
             <a class="btn btn-primary " asp-action="Index"><i class="fas fa-undo m-r-5 fa-lg"></i>Quay lại</a>
         </div>
+
+
 
     </div>
 </div>

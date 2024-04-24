@@ -15,7 +15,10 @@ using Microsoft.AspNetCore.Http;
 using WebAdminPKX.Extension;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using AspNetCoreHero.ToastNotification.Notyf;
-using Domain.Helpers;
+using PdfSharpCore;
+using PdfSharpCore.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
+using Microsoft.AspNetCore.Html;
 
 namespace WebAdminPKX.Controllers
 {
@@ -49,7 +52,7 @@ namespace WebAdminPKX.Controllers
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 20;
             var donHangs = _context.TblDonHangs.Include(t => t.IdKhachHangNavigation).Include(t => t.IdTrangThaiNavigation)
-                .AsNoTracking().OrderBy(t=>t.IdTrangThai);
+                .AsNoTracking().OrderBy(t => t.IdTrangThai);
             if (status != null)
             {
                 donHangs = donHangs.Where(t => t.IdTrangThai == status)
@@ -67,7 +70,7 @@ namespace WebAdminPKX.Controllers
             try
             {
                 var tcn = _context.TblDonHangs
-                .Where(t => t.IdTrangThai==idTrangThai)
+                .Where(t => t.IdTrangThai == idTrangThai)
                 .OrderByDescending(t => t.DNgayTao)
                 .Select(t => new
                 {
@@ -128,7 +131,7 @@ namespace WebAdminPKX.Controllers
                 return NotFound();
             }
             var ChiTietDonHang = _context.TblChiTietDonHangs
-                .Include(x=>x.IdSanPhamNavigation)
+                .Include(x => x.IdSanPhamNavigation)
                 .AsNoTracking().Where(x => x.IdDonHang == tblDonHang.IdDonHang).OrderBy(x => x.IdChiTietDonHang).ToList();
             ViewBag.ChiTiet = ChiTietDonHang;
 
@@ -139,19 +142,19 @@ namespace WebAdminPKX.Controllers
         public IActionResult Create(int id)
         {
             var ttKH = _context.TblKhachHangs
-                .FirstOrDefault(i=>i.IdKhachHang == id);
+                .FirstOrDefault(i => i.IdKhachHang == id);
             ViewBag.KhachHang = ttKH;
 
             var chitietdh = _context.TblChiTietDonHangs
-                .Include(i=>i.IdSanPhamNavigation)
-                .AsNoTracking().Where(i=>i.IdDonHang == 1).ToList();
+                .Include(i => i.IdSanPhamNavigation)
+                .AsNoTracking().Where(i => i.IdDonHang == 1).ToList();
             ViewBag.ChiTiet = chitietdh;
 
-            var don=_context.TblDonHangs.FirstOrDefault(i=>i.IdDonHang==1);
+            var don = _context.TblDonHangs.FirstOrDefault(i => i.IdDonHang == 1);
             return View(ttKH);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrder(int IdKhachHang)
@@ -178,7 +181,7 @@ namespace WebAdminPKX.Controllers
                     orderDetail.IdSanPham = item.SanPham.IdSanPham;
                     orderDetail.ISoLuong = item.amount;
                     var gia = _context.TblSanPhams.AsNoTracking()
-                        .FirstOrDefault(x=>x.IdSanPham==orderDetail.IdSanPham)
+                        .FirstOrDefault(x => x.IdSanPham == orderDetail.IdSanPham)
                         .FGiaTien.GetValueOrDefault(0);
                     orderDetail.FTongTien = item.amount * gia;
                     _context.Add(orderDetail);
@@ -188,7 +191,7 @@ namespace WebAdminPKX.Controllers
                 HttpContext.Session.Remove("GioHang");
                 _notyfService.Success("Đơn hàng đặt thành công");
                 //cap nhat thong tin khach hang
-                return RedirectToAction("Index","AdminDonHang");
+                return RedirectToAction("Index", "AdminDonHang");
             }
             catch
             {
@@ -207,8 +210,8 @@ namespace WebAdminPKX.Controllers
                 _context.TblChiTietDonHangs.Remove(order);
                 _context.SaveChanges();
 
-                var donhang = _context.TblDonHangs.Where(b=>b.IdDonHang == order.IdDonHang).FirstOrDefault();
-                donhang.FTongTien -=order.FTongTien;
+                var donhang = _context.TblDonHangs.Where(b => b.IdDonHang == order.IdDonHang).FirstOrDefault();
+                donhang.FTongTien -= order.FTongTien;
                 _context.Update(donhang);
                 _context.SaveChanges();
 
@@ -221,7 +224,7 @@ namespace WebAdminPKX.Controllers
             }
         }
         [HttpPost]
-        public JsonResult ChangeStatus(int oldStatus,int newStatus)
+        public JsonResult ChangeStatus(int oldStatus, int newStatus)
         {
             try
             {
@@ -231,7 +234,7 @@ namespace WebAdminPKX.Controllers
                 _context.Update(order);
                 _context.SaveChanges();
 
-                return Json(new { code = 200, msg = "Cập nhật thành công"});
+                return Json(new { code = 200, msg = "Cập nhật thành công" });
 
             }
             catch (Exception ex)
@@ -310,11 +313,11 @@ namespace WebAdminPKX.Controllers
                 }
                 // luu lai session
                 HttpContext.Session.Set<List<SanPhamGioHang>>("GioHang", cart);
-                return Json(new { success = true ,msg="Xoá thành công"});
+                return Json(new { success = true, msg = "Xoá thành công" });
             }
             catch
             {
-                return Json(new { success = false ,msg="Xoá thất bai"});
+                return Json(new { success = false, msg = "Xoá thất bai" });
             }
         }
 
@@ -333,7 +336,7 @@ namespace WebAdminPKX.Controllers
             ViewData["IdKhachHang"] = new SelectList(_context.TblKhachHangs, "IdKhachHang", "IdKhachHang");
             ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "STrangThai");
             var ChiTietDonHang = _context.TblChiTietDonHangs
-                .Include(x=>x.IdSanPhamNavigation)
+                .Include(x => x.IdSanPhamNavigation)
                 .AsNoTracking().Where(x => x.IdDonHang == tblDonHang.IdDonHang).OrderBy(x => x.IdChiTietDonHang).ToList();
             ViewBag.ChiTiet = ChiTietDonHang;
             return View(tblDonHang);
@@ -358,14 +361,15 @@ namespace WebAdminPKX.Controllers
                     tblDonHang.IdTrangThai = 2;
 
                     var ctdon = _context.TblChiTietDonHangs
-                        .Where(x => x.IdDonHang==id)
+                        .Where(x => x.IdDonHang == id)
                         .AsNoTracking().ToList();
-                    foreach(var item in  ctdon)
+                    foreach (var item in ctdon)
                     {
                         var updateItem = _context.TblSanPhams.Find(item.IdSanPham);
-                        updateItem.ISoLuongTonKho -=  item.ISoLuong;
+                        updateItem.ISoLuongTonKho -= item.ISoLuong;
 
-                        if (updateItem.ISoLuongTonKho< 0){
+                        if (updateItem.ISoLuongTonKho < 0)
+                        {
                             _notyfService.Error("Có sản phẩm kho không đủ số lượng để giao!");
                             ViewData["IdKhachHang"] = new SelectList(_context.Account, "IdKhachHang", "IdKhachHang", tblDonHang.IdKhachHang);
                             ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "IdTrangThai", tblDonHang.IdTrangThai);
@@ -469,7 +473,7 @@ namespace WebAdminPKX.Controllers
                 return NotFound();
             }
             var check = tblDonHang.IdTrangThai;
-            if (check !=1 && check != 2)
+            if (check != 1 && check != 2)
             {
                 _notyfService.Error("Chỉ có thể huỷ đơn chưa xác nhận hoặc đang giao!");
                 return RedirectToAction(nameof(Index));
@@ -498,5 +502,86 @@ namespace WebAdminPKX.Controllers
         {
             return _context.TblDonHangs.Any(e => e.IdDonHang == id);
         }
+
+        public async Task<IActionResult> Print(int id)
+        {
+            var doc = new PdfDocument();
+
+            var donhang = _context.TblDonHangs.AsNoTracking()
+                .Include(x => x.IdKhachHangNavigation)
+                .FirstOrDefault(x => x.IdDonHang == id);
+
+            if(donhang.IdTrangThai!=2&& donhang.IdTrangThai != 3)
+            {
+                _notyfService.Warning("Đơn hàng ở trạng thái đang giao hoặc hoàn thành");
+                return RedirectToAction(nameof(Index));
+            }
+
+            var ctdon = _context.TblChiTietDonHangs.AsNoTracking()
+                .Include(x => x.IdSanPhamNavigation)
+                .Where(x => x.IdDonHang == id).ToList();
+            var stt = 1;
+            
+            var html = "<div style='text-align:center;padding: 20px 0px 100px 0px;border: 1px solid #ccc'>";
+            html += "<img style='width:30px' src='D:\\asp.net\\PhuKienXe\\pkxstore\\WebAdminPKX\\wwwroot\\images\\pages\\phukienxe.jpg' alt='Logo' class='logo' />";
+            html += "<h2>HOÁ ĐƠN</h1>";
+            html += "<h4>Thời gian: "+ DateTime.Now +"</h1>";
+            html += "<div style='width:100%;border: 1px solid #ccc;'>";
+            html += "<p>Đơn vị bán hàng: PKX Store</p>";
+            html += "<p>Mã số thuế: 0123456789</p>";
+            html += "<p>Địa chỉ: Hà Trì - Hà Đông - Hà Nội</p>";
+            html += "<p>Điện thoại: 0123 - 456 - 789</p>";
+            html += "<p>Số tài khoản: 0123456789 Vietcombank</p>";
+            html += "</div>";
+            html += "<div style='width:100%;border: 1px solid #ccc;'>";
+            html += "<p>Họ tên người mua hàng: "+donhang.IdKhachHangNavigation.STenKhachHang+"</p>";
+            html += "<p>Địa chỉ: "+donhang.SDiaChi+"</p>";
+            html += "<p>Điện thoại: "+donhang.IdKhachHangNavigation.SSdt+"</p>";
+            html += "<p>Hình thức thanh toán: ................</p>";
+            html += "</div>";
+            html += "<table style='width:100%;margin-top:10px;border: 1px solid #ccc'>";
+            html += "<tr><th>STT</td>";
+            html += "<th>Sản phẩm</td>";
+            html += "<th>Số lượng</td>";
+            html += "<th>Đơn giá</td>";
+            html += "<th>Tổng tiền</td></tr>";  
+
+            if (ctdon != null && ctdon.Count > 0)
+            {
+                ctdon.ForEach(item =>
+                {
+                    html += "<tr><td>" + stt + "</td>";
+                    html += "<td>"+item.IdSanPhamNavigation.STenSanPham+"</td>";
+                    html += "<td>"+item.ISoLuong+"</td>";
+                    html += "<td>"+item.FTongTien+"</td>";
+                    html += "<td>"+(item.ISoLuong*item.FTongTien)+"</td></tr>";
+                    stt++;
+                });
+            }
+            html += "<hr>";
+            html += "<tr><td colspan='4'>Tổng tiền</td>";
+            html += "<td>" + donhang.FTongTien + "</td></tr>";
+            html += "</table>";
+            html += "<table style='width:100%;border:0px;'>";
+            html += "<tr><td>Người mua hàng</td>";
+            html += "<td>Người bán hàng</td></tr>";
+            html += "<tr><td>(Ký và ghi rõ họ tên)</td>";
+            html += "<td>(Ký và ghi rõ họ tên)</td></tr>";
+            html += "</table>";
+            
+            html += "</div>";
+            PdfGenerator.AddPdfPages(doc, html, PageSize.A4);
+            byte[]? response = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                doc.Save(ms);
+                response = ms.ToArray();
+            }
+            string Filename = "PKX_DonHang_" + id + ".pdf";
+
+            // Trả về tệp PDF làm phản hồi
+            return File(response, "application/pdf", Filename);
+        }
+
     }
 }
