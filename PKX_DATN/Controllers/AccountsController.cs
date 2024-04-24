@@ -65,6 +65,60 @@ namespace PKX_DATN.Controllers
                 return Json(data: true);
             }
         }
+        [HttpPost]
+        public JsonResult RemoveOrder(int id)
+        {
+            try
+            {
+                var tblDonHang = _context.TblDonHangs.Find(id);
+                if (tblDonHang != null)
+                {
+                    tblDonHang.IdTrangThai = 4;
+                    _context.TblDonHangs.Update(tblDonHang);
+                }
+
+                _context.SaveChangesAsync();
+
+                return Json(new { code = 200, msg = "Huỷ thành công đơn hàng" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 501, msg = "Huỷ thất bại " + ex.Message });
+            }
+        }
+        [HttpGet]
+        public JsonResult TrangDonHang()
+        {
+            var AccountID = HttpContext.Session.GetString("CustomerId");
+            if (AccountID == null)
+            {
+                return Json(new { code = 300, msg = "Chưa đăng nhập" });
+            }
+            try
+            {
+                var tcn = _context.TblDonHangs
+                .Where(t => t.IdKhachHang == Int32.Parse(AccountID))
+                .OrderBy(t=>t.IdTrangThai)
+                .Select(t => new
+                {
+                    maDon = t.IdDonHang,
+                    ngayMua = t.DNgayTao.ToString("dd/MM/yyyy"),
+                    hoTen = t.IdKhachHangNavigation.STenKhachHang,
+                    trangThai = t.IdTrangThaiNavigation.STrangThai,
+                    tongTien = t.FTongTien,
+                })
+                .AsNoTracking().ToList();
+                return Json(new { code = 200, tcn = tcn, msg = "thành công" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "thất bại. error: " + ex.Message });
+            }
+        }
+
+
+
         [AllowAnonymous]
         public IActionResult Dashboard()
         {

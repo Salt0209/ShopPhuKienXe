@@ -49,7 +49,7 @@ namespace WebAdminPKX.Controllers
             var pageNumber = page == null || page <= 0 ? 1 : page.Value;
             var pageSize = 20;
             var donHangs = _context.TblDonHangs.Include(t => t.IdKhachHangNavigation).Include(t => t.IdTrangThaiNavigation)
-                .AsNoTracking().OrderByDescending(t=>t.DNgayTao);
+                .AsNoTracking().OrderBy(t=>t.IdTrangThai);
             if (status != null)
             {
                 donHangs = donHangs.Where(t => t.IdTrangThai == status)
@@ -98,6 +98,7 @@ namespace WebAdminPKX.Controllers
                 return NotFound();
             }
             var ChiTietDonHang = _context.TblChiTietDonHangs
+                .Include(x=>x.IdSanPhamNavigation)
                 .AsNoTracking().Where(x => x.IdDonHang == tblDonHang.IdDonHang).OrderBy(x => x.IdChiTietDonHang).ToList();
             ViewBag.ChiTiet = ChiTietDonHang;
 
@@ -165,6 +166,28 @@ namespace WebAdminPKX.Controllers
                 var kh = _context.TblKhachHangs
                 .FirstOrDefault(i => i.IdKhachHang == IdKhachHang);
                 return View(kh);
+            }
+        }
+        [HttpPost]
+        public JsonResult RemoveOrder(int id)
+        {
+            try
+            {
+                var order = _context.TblChiTietDonHangs.Where(b => b.IdChiTietDonHang == id).FirstOrDefault();
+                _context.TblChiTietDonHangs.Remove(order);
+                _context.SaveChanges();
+
+                var donhang = _context.TblDonHangs.Where(b=>b.IdDonHang == order.IdDonHang).FirstOrDefault();
+                donhang.FTongTien -=order.FTongTien;
+                _context.Update(donhang);
+                _context.SaveChanges();
+
+                return Json(new { code = 200, msg = "Xóa thành công sản phẩm" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 501, msg = "Xóa thất bại " + ex.Message });
             }
         }
 
@@ -261,7 +284,7 @@ namespace WebAdminPKX.Controllers
             ViewData["IdKhachHang"] = new SelectList(_context.TblKhachHangs, "IdKhachHang", "IdKhachHang");
             ViewData["IdTrangThai"] = new SelectList(_context.TblTrangThaiDonHangs, "IdTrangThai", "STrangThai");
             var ChiTietDonHang = _context.TblChiTietDonHangs
-
+                .Include(x=>x.IdSanPhamNavigation)
                 .AsNoTracking().Where(x => x.IdDonHang == tblDonHang.IdDonHang).OrderBy(x => x.IdChiTietDonHang).ToList();
             ViewBag.ChiTiet = ChiTietDonHang;
             return View(tblDonHang);
@@ -375,6 +398,13 @@ namespace WebAdminPKX.Controllers
             if (tblDonHang == null)
             {
                 return NotFound();
+            }
+            var check = _context.TblChiTietDonHangs
+                .AsNoTracking().FirstOrDefault(i => i.IdDonHang == id);
+            if (check != null)
+            {
+                _notyfService.Error("Đơn hàng có chứa sản phẩm ở trong!");
+                return RedirectToAction(nameof(Index));
             }
 
             return View(tblDonHang);

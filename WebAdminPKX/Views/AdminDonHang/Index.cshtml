@@ -43,6 +43,7 @@
                     <tr>
 
                         <th>STT</th>
+                        <th>Mã đơn hàng</th>
                         <th>Tên khách hàng</th>
                         <th>Ngày mua</th>
                         <th>Tổng tiền</th>
@@ -58,6 +59,9 @@
                             <tr>
                                 <td>
                                     @index
+                                </td>
+                                <td>
+                                    @item.IdDonHang
                                 </td>
                                 <td>
                                     @item.IdKhachHangNavigation.STenKhachHang
@@ -108,7 +112,7 @@
                                 @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng"))
                                 {
                                     <td>
-                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Edit" asp-route-id="@item.IdDonHang"><i class="far fa-edit m-r-5 fa-lg"></i>Cập nhật</a>
+                                        <a class="btn btn-secondary btn-tone m-r-5" asp-controller="AdminDonHang" asp-action="Edit" asp-route-id="@item.IdDonHang"><i class="far fa-edit m-r-5 fa-lg"></i>Duyệt</a>
                                     </td>
                                 }
                                 @if (item.IdTrangThaiNavigation.STrangThai.Equals("Chờ lấy hàng") || item.IdTrangThaiNavigation.STrangThai.Equals("Đang giao"))
